@@ -1,39 +1,59 @@
-import ReactDOM from "react-dom/client";  // render for web browswers
-import React from 'react';                // react core library
-import { BrowserRouter, Routes, Route } from "react-router-dom";  // React router
-import Layout from "./pages/Layout";
-import Categorize from "./pages/Categorize";
-import Clean from "./pages/Clean";
-import Complete from "./pages/Complete";
-import Declutter from "./pages/Declutter";
-import Empty from "./pages/Empty";
-import Menu from "./pages/Menu";
-import Return from "./pages/Return";
-import Zone from "./pages/Zone"
+// In Next.js, the routing is handled via the /pages directory
+// Each component (e.g., Categorize, Clean, etc.) becomes a separate file in /pages
+// No need for react-router-dom or manual <Routes>, <Route> definitions
 
-export default function App() {
+// Example folder structure in /src/pages:
+// - index.js                --> Home page
+// - app.js                  --> AppPage
+// - categorize.js           --> Categorize
+// - clean.js                --> Clean
+// - complete.js             --> Complete
+// - declutter.js            --> Declutter
+// - empty.js                --> Empty
+// - menu.js                 --> Menu
+// - return.js               --> Return
+// - zone.js                 --> Zone
+// - _app.js                 --> For global Layout
+// - 404.js                  --> NoPage (fallback route)
+
+// ---- src/pages/_app.js ----
+import Layout from "../components/Layout"; // Move Layout into /components if not already
+import "../styles/globals.css"; // Optional global styles
+
+export default function MyApp({ Component, pageProps }) {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route path="app" element={<AppPage />} />
-        <Route path="categorize" element={<Categorize />} />
-        <Route path="clean" element={<Clean />} />
-        <Route path="complete" element={<Complete />} />
-        <Route path="declutter" element={<Declutter />} />
-        <Route path="empty" element={<Empty />} />
-        <Route path="menu" element={<Menu />} />
-        <Route path="return" element={<Return />} />
-        <Route path="zone" element={<Zone />} />
-        <Route path="*" element={<NoPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Layout>
+      <Component {...pageProps} />
+    </Layout>
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+// ---- src/pages/index.js ----
+import Home from "../components/Home"; // If Home was a component
 
+export default function HomePage() {
+  return <Home />;
+}
 
+// ---- src/pages/app.js ----
+import AppPage from "../components/AppPage";
+
+export default function AppRoute() {
+  return <AppPage />;
+}
+
+// ---- src/pages/categorize.js ----
+import Categorize from "../components/Categorize";
+
+export default function CategorizePage() {
+  return <Categorize />;
+}
+
+// Repeat this pattern for clean.js, complete.js, etc.
+
+// ---- src/pages/404.js ----
+import NoPage from "../components/NoPage";
+
+export default function Custom404() {
+  return <NoPage />;
+}

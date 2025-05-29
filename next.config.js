@@ -8,7 +8,9 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias['@'] = __dirname + '/src'
     return config
-  }
+  },
+  output: 'export',
+  distDir: '.next'
 }
 
 module.exports = nextConfig

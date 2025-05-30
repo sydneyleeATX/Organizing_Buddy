@@ -25,6 +25,21 @@ export default function Declutter() {
     router.push('/clean');
   };
 
+  // Messages for the encouragement popup
+  const declutterMessages = [
+    "Every 'toss' is a weight lifted, creating lightness in your space.", 
+    "By deciding to 'keep' what truly matters, you're defining your priorities.", 
+    "The 'relocate' pile is just items finding their happy new home – you're helping them!", 
+    "You're not just sorting things; you're sorting thoughts and freeing up mental space.", 
+    "Each item you handle brings you closer to a home that serves you better.", 
+    "Don't rush the 'toss' pile; trust your intuition about what to release.", 
+    "Celebrate every 'keep'; these are the treasures that stay with you.", 
+    "The act of 'relocating' brings order and purpose to every corner.", 
+    "Your decision to 'toss' creates room for clarity, not just emptiness.", 
+    "You're building a functional, peaceful environment, one sorted item at a time."
+  ];
+
+  // Main container with full viewport height and centered content
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>
@@ -46,19 +61,6 @@ export default function Declutter() {
           <p style={styles.description}>It belongs somewhere else in your home.</p>
         </div>
 
-        const declutterMessages = [
-          "Every 'toss' is a weight lifted, creating lightness in your space.", 
-          "By deciding to 'keep' what truly matters, you're defining your priorities.", 
-          "The 'relocate' pile is just items finding their happy new home – you're helping them!", 
-          "You're not just sorting things; you're sorting thoughts and freeing up mental space.", 
-          "Each item you handle brings you closer to a home that serves you better.", 
-          "Don't rush the 'toss' pile; trust your intuition about what to release.", 
-          "Celebrate every 'keep'; these are the treasures that stay with you.", 
-          "The act of 'relocating' brings order and purpose to every corner.", 
-          "Your decision to 'toss' creates room for clarity, not just emptiness.", 
-          "You're building a functional, peaceful environment, one sorted item at a time."
-        ];
-        
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={declutterMessages} />   
               

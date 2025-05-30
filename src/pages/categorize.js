@@ -26,6 +26,20 @@ export default function Categorize() {
   };
 
 
+  // Messages for the encouragement popup
+  const categorizeMessages = [
+    "Every category you create brings clarity to your chaos.", 
+    "You're building a system that will save you time and stress later.", 
+    "Imagine finding exactly what you need, exactly when you need it – you're making that possible.", 
+    "Don't just organize things; organize your peace of mind.", 
+    "Each label you add is a step toward effortless retrieval.", 
+    "You're transforming clutter into a streamlined flow for your daily life.", 
+    "Think of organizing as crafting a personalized map for your belongings.", 
+    "The effort you put into categorizing pays dividends in daily efficiency.", 
+    "You're creating a sense of calm and control, one organized drawer at a time.", 
+    "A place for everything, and everything in its place – you're the architect of that order!"
+  ];
+
   // Main container with full viewport height and centered content
   return (
     <div style={styles.container}>
@@ -35,25 +49,11 @@ export default function Categorize() {
       </h1>
       {/* Description text explaining the purpose of this section */}
       <p style={styles.description}>
-      Now group your 'KEEP' items. Pens with pens, spices with spices, etc
+        Now group your 'KEEP' items. Pens with pens, spices with spices, etc
       </p>
 
-      const categorizeMessages = [
-        "Every category you create brings clarity to your chaos.", 
-        "You're building a system that will save you time and stress later.", 
-        "Imagine finding exactly what you need, exactly when you need it – you're making that possible.", 
-        "Don't just organize things; organize your peace of mind.", 
-        "Each label you add is a step toward effortless retrieval.", 
-        "You're transforming clutter into a streamlined flow for your daily life.", 
-        "Think of organizing as crafting a personalized map for your belongings.", 
-        "The effort you put into categorizing pays dividends in daily efficiency.", 
-        "You're creating a sense of calm and control, one organized drawer at a time.", 
-        "A place for everything, and everything in its place – you're the architect of that order!"
-        ];
-        
-        {/* Calling EncouragementPopup component and passing messages array as argument */}
-        <EncouragementPopup messages={categorizeMessages} />  
-
+      {/* Calling EncouragementPopup component and passing messages array as argument */}
+      <EncouragementPopup messages={categorizeMessages} />
 
       <button style={styles.button} onClick={toReturn}>
         The items are categorized!

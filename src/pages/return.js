@@ -17,33 +17,33 @@ export default function Return() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space';
 
+  // Messages for the encouragement popup
+  const returnMessages = [
+    "Every item now has a purpose and a place – your home is truly serving you.", 
+    "You're completing the cycle; giving each belonging its logical and happy home.", 
+    "No more searching! You've designed a system where everything is effortlessly found.", 
+    "This final step seals the deal, locking in all your hard-earned order.", 
+    "You're creating a sustainable system, making future tidying a breeze.", 
+    "Feel the immense satisfaction of knowing exactly where everything belongs.", 
+    "Your space is now a testament to your hard work and thoughtful decisions.", 
+    "You've transformed your home from a storage unit into a true sanctuary.", 
+    "This is the moment of effortless living; enjoy the fruits of your organizing efforts!", 
+    "Congratulations! You've given your home and your belongings the clarity they deserve."
+  ];
+
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>
         Return Items
       </h1>
       <p style={styles.description}>
-      Put your categorized items back in your {zoneName}. Think about
+        Put your categorized items back in your {zoneName}. Think about
       </p>
       <ul style={styles.ul}>
         <li>Easy access: What do you use most often?</li>
         <li>Vertical space: Can you stack items or use risers?</li>
-        </ul>
+      </ul>
 
-      
-      const returnMessages = [
-        "Every item now has a purpose and a place – your home is truly serving you.", 
-        "You're completing the cycle; giving each belonging its logical and happy home.", 
-        "No more searching! You've designed a system where everything is effortlessly found.", 
-        "This final step seals the deal, locking in all your hard-earned order.", 
-        "You're creating a sustainable system, making future tidying a breeze.", 
-        "Feel the immense satisfaction of knowing exactly where everything belongs.", 
-        "Your space is now a testament to your hard work and thoughtful decisions.", 
-        "You've transformed your home from a storage unit into a true sanctuary.", 
-        "This is the moment of effortless living; enjoy the fruits of your organizing efforts!", 
-        "Congratulations! You've given your home and your belongings the clarity they deserve."
-      ];
-        
       {/* Calling EncouragementPopup component and passing messages array as argument */}
       <EncouragementPopup messages={returnMessages} />
 

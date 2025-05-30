@@ -21,6 +21,20 @@ export default function Clean() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space';
 
+  // Messages for the encouragement popup
+  const cleanMessages = [
+    "Every swipe brings you closer to a sparkling space.", 
+    "A clean home is a clear mind – you're investing in your peace.", 
+    "You're creating a fresh start with every scrub and polish.", 
+    "Feel the satisfaction of transformation as dirt disappears.", 
+    "Even small cleaning tasks make a big difference in how your home feels.", 
+    "Think of cleaning as an act of self-care for your living environment.", 
+    "You're building healthy habits that benefit your well-being.", 
+    "Embrace the process; the results of your effort will shine through.", 
+    "You're creating a sanctuary, one clean surface at a time.", 
+    "A tidy space is a happy place, and you're making it happen!"
+  ];
+
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>
@@ -29,23 +43,10 @@ export default function Clean() {
       <p style={styles.description}>
         Now that it's empty, give your {zoneName} a quick wipe down. Get rid of dust, crumbs, etc
       </p>
-      
-      const cleanMessages = [
-        "Every swipe brings you closer to a sparkling space.", 
-        "A clean home is a clear mind – you're investing in your peace.", 
-        "You're creating a fresh start with every scrub and polish.", 
-        "Feel the satisfaction of transformation as dirt disappears.", 
-        "Even small cleaning tasks make a big difference in how your home feels.", 
-        "Think of cleaning as an act of self-care for your living environment.", 
-        "You're building healthy habits that benefit your well-being.", 
-        "Embrace the process; the results of your effort will shine through.", 
-        "You're creating a sanctuary, one clean surface at a time.", 
-        "A tidy space is a happy place, and you're making it happen!"
-        ];
-        
-        {/* Calling EncouragementPopup component and passing messages array as argument */}
-        <EncouragementPopup messages={cleanMessages} />  
-      
+
+      {/* Calling EncouragementPopup component and passing messages array as argument */}
+      <EncouragementPopup messages={cleanMessages} />
+
       <button style={styles.button} onClick={() => router.push('/categorize')}>
         I'm ready to categorize
       </button>

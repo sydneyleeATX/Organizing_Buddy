@@ -9,6 +9,20 @@ export default function Empty() {
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
 
 
+  // Messages for the encouragement popup
+  const emptyMessages = [
+    "You're doing the hard part — clearing the way!", 
+    "Every item you remove makes space for clarity.", 
+    "Great job! One empty surface at a time.", 
+    "This is how transformation begins — with a clear space.", 
+    "Keep going — you're making room for calm.", 
+    "An empty space is a fresh start.", 
+    "Don't stop now — the zone is almost clear!", 
+    "Let it go — you're creating order.", 
+    "This moment sets the tone for your whole project.", 
+    "You're making real progress — keep clearing!"
+  ];
+
   return (
     <div style={styles.container}>
       <h1 style={styles.message}>
@@ -18,21 +32,8 @@ export default function Empty() {
         Take everything out of your {zoneName}. Put it on a clear surface nearby.
       </p>
 
-      const emptyMessages = [
-        "You're doing the hard part — clearing the way!", 
-        "Every item you remove makes space for clarity.", 
-        "Great job! One empty surface at a time.", 
-        "This is how transformation begins — with a clear space.", 
-        "Keep going — you're making room for calm.", 
-        "An empty space is a fresh start.", 
-        "Don't stop now — the zone is almost clear!", 
-        "Let it go — you're creating order.", 
-        "This moment sets the tone for your whole project.", 
-        "You're making real progress — keep clearing!"
-      ];
-
       {/* Calling EncouragementPopup component and passing messages array as argument */}
-      <EncouragementPopup messages={emptyMessages} />   
+      <EncouragementPopup messages={emptyMessages} />
 
       {/* Button to start a new project by navigating to /declutter */}
       <button style={styles.button} onClick={() => router.push('/declutter')}>

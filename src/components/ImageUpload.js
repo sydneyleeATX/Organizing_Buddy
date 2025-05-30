@@ -16,7 +16,7 @@ import React, { useState } from 'react';
  * Reusable image upload component with preview functionality
  * @returns {JSX.Element} The image upload component with preview
  */
-export default function ImageUploader() {
+export default function ImageUploader({ onImageConfirmed }) {
   // State to store the image preview URL
   const [imagePreview, setImagePreview] = useState(null);
   // State to store the actual file object
@@ -81,7 +81,7 @@ export default function ImageUploader() {
               onClick={handleUpload} 
               style={styles.uploadButton}
             >
-              Upload Photo  
+              Upload Photo
             </button>
           )}
         </div>

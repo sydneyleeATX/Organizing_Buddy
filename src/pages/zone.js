@@ -53,11 +53,14 @@ export default function Zone() {
 
   return (
     <div style={styles.container}>
-      {/* Main heading asking user to define their focus area */}
+      {/* Main heading */}
       <h1 style={styles.h1}>Define your Zone</h1>
-      <p style={styles.p}>
-        Let's define your focus area. What space are you organizing?
-      </p>
+      
+      {!confirmedZoneName && (
+        <p style={styles.p}>
+          Let's define your focus area. What space are you organizing?
+        </p>
+      )}
 
       {!confirmedZoneName && ( // If zone name is NOT confirmed, show input field
         <>
@@ -81,7 +84,7 @@ export default function Zone() {
             Great, we are organizing your {zoneName}!
           </p>
           <p style={styles.p}>
-            Now, please upload a photo of your {zoneName} *before* you start organizing. This will be your "Before" picture!
+            Upload a "before" photo of your {zoneName}. When you finish this project the difference will be remarkable! 
           </p>
           {/* Render the ImageUploader component here */}
           <ImageUploader onImageConfirmed={handlePhotoConfirmed} />

@@ -21,6 +21,8 @@ export default function ImageUploader() {
   const [imagePreview, setImagePreview] = useState(null);
   // State to store the actual file object
   const [imageFile, setImageFile] = useState(null);
+  // State to track if upload is confirmed
+  const [isUploadConfirmed, setIsUploadConfirmed] = useState(false);
 
   /**
    * Handles file selection change
@@ -45,13 +47,12 @@ export default function ImageUploader() {
    */
   const handleUpload = () => {
     if (imageFile) {
-      // In a real app, you'd send 'imageFile' to a server (e.g., using FormData)
-      console.log('Uploading file:', imageFile.name, imageFile);
-      // Example implementation:
-      // const formData = new FormData();
-      // formData.append('image', imageFile);
-      // fetch('/api/upload', { method: 'POST', body: formData });
-      alert('File ready to upload! Check console.');
+      // Store the file and confirm the upload
+      console.log('File stored:', imageFile.name);
+      setIsUploadConfirmed(true);
+      if (onImageConfirmed) {
+        onImageConfirmed(imageFile);
+      }
     } else {
       alert('Please select an image first.');
     }
@@ -75,12 +76,14 @@ export default function ImageUploader() {
             style={styles.previewImage}
           />
           <p style={styles.fileName}>{imageFile.name}</p>
-          <button 
-            onClick={handleUpload} 
-            style={styles.uploadButton}
-          >
-            Confirm Upload
-          </button>
+          {!isUploadConfirmed && (
+            <button 
+              onClick={handleUpload} 
+              style={styles.uploadButton}
+            >
+              Confirm Upload
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -81,7 +81,7 @@ export default function ImageUploader() {
               onClick={handleUpload} 
               style={styles.uploadButton}
             >
-              Confirm Upload
+              Upload Photo  
             </button>
           )}
         </div>

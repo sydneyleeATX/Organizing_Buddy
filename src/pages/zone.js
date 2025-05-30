@@ -53,17 +53,14 @@ export default function Zone() {
 
   return (
     <div style={styles.container}>
-      {/* Main heading */}
+      {/* Main heading asking user to define their focus area */}
       <h1 style={styles.h1}>Define your Zone</h1>
-      
-      {!confirmedZoneName && (
-        <p style={styles.p}>
-          Let's define your focus area. What space are you organizing?
-        </p>
-      )}
 
       {!confirmedZoneName && ( // If zone name is NOT confirmed, show input field
         <>
+          <p style={styles.p}>
+            Let's define your focus area. What space are you organizing?
+          </p>
           <input
             type="text"
             placeholder="e.g., Kitchen Pantry, Home Office Desk"
@@ -73,7 +70,7 @@ export default function Zone() {
           />
           {/* Confirmation button to proceed */}
           <button style={styles.button} onClick={handleConfirmZoneName}>
-            Confirm Zone Name
+            Zone Name
           </button>
         </>
       )}
@@ -91,7 +88,7 @@ export default function Zone() {
         </>
       )}
 
-      {confirmedZoneName && zonePhoto && ( // If BOTH zone name and photo ARE confirmed, show the "Let's Go!" button
+      {confirmedZoneName && zonePhoto && ( // If zone name is confirmed and photo is selected, show the "Let's Go!" button
         <>
           <p style={styles.p}>
             Great, we are organizing your {zoneName}!

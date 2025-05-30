@@ -14,6 +14,7 @@
 // Import necessary dependencies
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import ImageUploader from '../components/ImageUpload';
 
 /**
  * Zone component
@@ -27,8 +28,10 @@ export default function Zone() {
   const router = useRouter();
 
   // State variables to track user input and confirmation status
-  const [zoneName, setZoneName] = useState('');  // stores the name of the zone and provides method to update it
-  const [confirmed, setConfirmed] = useState(false);  // tracks whether the user has confirmed their zone name
+  const [zoneName, setZoneName] = useState('');  // holds the user's input for their zone name
+  const [confirmedZoneName, setConfirmedZoneName] = useState(false);  // tracks zone name confirmation
+  const [zonePhoto, setZonePhoto] = useState(null);  // holds the selected photo file
+  const [confirmedZonePhoto, setConfirmedZonePhoto] = useState(false);  // tracks photo confirmation
 
   /**
    * Handle user confirmation of their focus area
@@ -36,10 +39,16 @@ export default function Zone() {
    * This function checks if the user has entered a valid zone name and
    * updates the confirmation status accordingly.
    */
-  const handleConfirm = () => {
+  const handleConfirmZoneName = () => {
     if (zoneName.trim()) {  // checks if the zone name is not empty
-      setConfirmed(true);
+      setConfirmedZoneName(true);
     }
+  };
+
+  // Handle photo confirmation from ImageUploader and takes the file as an argument
+  const handlePhotoConfirmed = (file) => {
+    setZonePhoto(file);
+    setConfirmedZonePhoto(true);
   };
 
   return (
@@ -50,28 +59,40 @@ export default function Zone() {
         Let's define your focus area. What space are you organizing?
       </p>
 
-      {/* User input field for zone name */}
-      {!confirmed && (  // if the user has not confirmed their zone name, show the input field
+      {!confirmedZoneName && ( // If zone name is NOT confirmed, show input field
         <>
           <input
             type="text"
-            placeholder="e.g., Kitchen, Garage, Closet"
+            placeholder="e.g., Kitchen Pantry, Home Office Desk"
             value={zoneName}
             onChange={(e) => setZoneName(e.target.value)}
             style={styles.input}
           />
           {/* Confirmation button to proceed */}
           <button style={styles.button} onClick={handleConfirm}>
-            Submit
+            Confirm Zone Name
           </button>
         </>
       )}
 
-      {confirmed && (  // if the user has confirmed their zone name, show the next step
+      {confirmedZoneName && !zonePhoto && ( // If zone name IS confirmed, but NO photo yet, show image uploader
         <>
           <p style={styles.p}>
             Great, we are organizing your {zoneName}!
           </p>
+          <p style={styles.p}>
+            Now, please upload a photo of your {zoneName} *before* you start organizing. This will be your "Before" picture!
+          </p>
+          {/* Render the ImageUploader component here */}
+          <ImageUploader onImageConfirmed={handlePhotoConfirmed} />
+        </>
+      )}
+
+      {confirmedZoneName && zonePhoto && ( // If BOTH zone name and photo ARE confirmed, show the "Let's Go!" button
+        <>
+          <p style={styles.p}>
+            Great, we are organizing your {zoneName}!
+          </p>                                              {/* ? is start of URL, $ separates parameter name from value*/}
           <button style={styles.button} onClick={() => router.push(`/empty?zoneName=${encodeURIComponent(zoneName)}`)}>
             Let's Go!
           </button>

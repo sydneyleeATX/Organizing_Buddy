@@ -12,6 +12,26 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/router';
+import CelebrationPage from '../components/Confetti';
+
+
+
+export default function Complete() {
+  const router = useRouter();
+  const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
+  
+  return (
+    <div style={styles.container}>
+      <CelebrationPage />
+      <h1 style={styles.heading}>
+        Project Complete
+      </h1>
+      <p style={styles.description}>
+        Great job! Your project is complete!
+      </p>
+    </div>
+  );
+}
 
 // Inline styles for layout and text
 const styles = {
@@ -31,20 +51,7 @@ const styles = {
   },
   description: {
     fontSize: '1.1rem',                  // Standard font size
-    color: '#666',                       // Text color
+    color: '#333',                       // Text color
     marginBottom: '2rem',                // Space below description
   }
 };
-
-export default function Complete() {
-  return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>
-        Project Complete
-      </h1>
-      <p style={styles.description}>
-        Great job! Your project is complete!
-      </p>
-    </div>
-  );
-}

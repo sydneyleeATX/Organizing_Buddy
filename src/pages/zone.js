@@ -69,7 +69,7 @@ export default function Zone() {
             style={styles.input}
           />
           {/* Confirmation button to proceed */}
-          <button style={styles.button} onClick={handleConfirm}>
+          <button style={styles.button} onClick={handleConfirmZoneName}>
             Confirm Zone Name
           </button>
         </>

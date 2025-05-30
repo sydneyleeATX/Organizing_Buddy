@@ -22,7 +22,7 @@ export default function Complete() {
   
   return (
     <div style={styles.container}>
-      <CelebrationPage />
+      <CelebrationPage />  {/* CelebrationPage component, use the slash because it is a self-closing HTML tag */}
       <h1 style={styles.heading}>
         Project Complete
       </h1>

@@ -40,14 +40,16 @@ export default function EncouragementPopup({ messages, interval = 180000, durati
       setMessage(randomMsg);
       setVisible(true);
 
-      // Hide popup after duration
+      // setTimeout(...) schedules a one-time function to run after duration milliseconds.
+      // In this case, it sets visible to false, which likely hides a popup.
+      // timeoutId stores the ID returned by setTimeout so we can cancel it later.
       const timeoutId = setTimeout(() => setVisible(false), duration);
 
       // Cleanup timeout when component unmounts
       return () => clearTimeout(timeoutId);
     }, interval);
 
-    // Cleanup interval when component unmounts
+    // cancels the scheduled setTimeout using clearTimeout(timeoutId)
     return () => clearInterval(intervalId);
   }, [messages, interval, duration]);  // Dependencies for effect
 

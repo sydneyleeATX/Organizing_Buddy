@@ -18,8 +18,6 @@ export default function CelebrationPage() {
   return (
     <div style={{ textAlign: 'center', paddingTop: '5rem' }}>
       {showConfetti && <Confetti width={width} height={height} />}
-      <h1>🎉 Congratulations! 🎉</h1>
-      <p>You've completed this step!</p>
     </div>
   );
 }

@@ -47,6 +47,7 @@ export default function Zone() {
 
   // Handle photo confirmation from ImageUploader and takes the file as an argument
   const handlePhotoConfirmed = (file) => {
+    console.log('Zone photo updated:', file);
     setZonePhoto(file);
     setConfirmedZonePhoto(true);
   };
@@ -70,12 +71,12 @@ export default function Zone() {
           />
           {/* Confirmation button to proceed */}
           <button style={styles.button} onClick={handleConfirmZoneName}>
-            Zone Name
+            Submit
           </button>
         </>
       )}
 
-      {confirmedZoneName && !zonePhoto && ( // If zone name IS confirmed, but NO photo yet, show image uploader
+      {confirmedZoneName && !confirmedZonePhoto && ( // If zone name IS confirmed, but photo is not uploaded yet, show image uploader
         <>
           <p style={styles.p}>
             Great, we are organizing your {zoneName}!

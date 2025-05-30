@@ -1,21 +1,39 @@
 'use client';
 import React from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router'; // Import Next.js' router for navigation
+import EncouragementPopup from '../components/encourage';
 
 // Menu component with navigation buttons
 export default function Empty() {
-  const router = useRouter();
-  const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default
+  const router = useRouter();  // Initialize the router instance
+  const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
 
 
   return (
     <div style={styles.container}>
       <h1 style={styles.message}>
-        Empty {zoneName}
+        Empty 
       </h1>
       <p style={styles.description}>
-        Take everything out of {zoneName}. Put it on a clear surface nearby.
+        Take everything out of your {zoneName}. Put it on a clear surface nearby.
       </p>
+
+      const emptyMessages = [
+        "You're doing the hard part — clearing the way!", 
+        "Every item you remove makes space for clarity.", 
+        "Great job! One empty surface at a time.", 
+        "This is how transformation begins — with a clear space.", 
+        "Keep going — you're making room for calm.", 
+        "An empty space is a fresh start.", 
+        "Don't stop now — the zone is almost clear!", 
+        "Let it go — you're creating order.", 
+        "This moment sets the tone for your whole project.", 
+        "You're making real progress — keep clearing!"
+      ];
+
+      {/* Calling EncouragementPopup component and passing messages array as argument */}
+      <EncouragementPopup messages={emptyMessages} />   
+
       {/* Button to start a new project by navigating to /declutter */}
       <button style={styles.button} onClick={() => router.push('/declutter')}>
         I'm ready to sort

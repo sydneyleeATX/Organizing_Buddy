@@ -76,6 +76,7 @@ export default function Zone() {
   const [confirmedZoneName, setConfirmedZoneName] = useState(false);  // tracks zone name confirmation
   const [zonePhoto, setZonePhoto] = useState(null);  // holds the selected photo file
   const [confirmedZonePhoto, setConfirmedZonePhoto] = useState(false);  // tracks photo confirmation
+  
 
   /**
    * Handle user confirmation of their focus area
@@ -93,6 +94,32 @@ export default function Zone() {
   const handlePhotoConfirmed = (file) => {
     setZonePhoto(file);
     setConfirmedZonePhoto(true);
+  };
+
+  const generateUniqueID = () => {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  };
+
+  const createNewProject = (zoneName) => {
+    const stored = localStorage.getItem('projects');
+    const existingProjects = stored ? JSON.parse(stored) : [];
+    
+    const newProject = {
+      id: generateUniqueID(),
+      zoneName,
+      startDate: new Date().toISOString().split('T')[0],
+      currentStep: 'empty',
+      status: 'in-progress',
+      lastUpdated: new Date().toISOString()
+    };
+
+    const updatedProjects = [...existingProjects, newProject];
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
+  };
+
+  const handleZoneConfirm = () => {
+    createNewProject(zoneName);
+    router.push(`/empty?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
   return (
@@ -138,7 +165,7 @@ export default function Zone() {
             <p style={inlineStyles.p}>
               Great, we are organizing your {zoneName}!
             </p>                                              {/* ? is start of URL, $ separates parameter name from value*/}
-            <button style={inlineStyles.button} onClick={() => router.push(`/empty?zoneName=${encodeURIComponent(zoneName)}`)}>
+            <button style={inlineStyles.button} onClick={handleZoneConfirm}>
               Let's Go!
             </button>
           </>

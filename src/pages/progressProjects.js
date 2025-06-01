@@ -17,36 +17,6 @@ import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 
 /**
- * Mock data representing ongoing organizing projects
- * In a real application, this data would come from a database
- * Each project has:
- * - Unique ID
- * - Zone name (area being organized)
- * - Start date
- * - Current step in the organization process
- * - Status (in-progress/completed)
- * - Last updated timestamp
- */
-const mockProjects = [
-  {
-    id: 1,
-    zoneName: 'Kitchen',
-    startDate: '2025-05-28',
-    currentStep: 'categorize',
-    status: 'in-progress',
-    lastUpdated: '2025-05-30 15:00'
-  },
-  {
-    id: 2,
-    zoneName: 'Living Room',
-    startDate: '2025-05-25',
-    currentStep: 'declutter',
-    status: 'in-progress',
-    lastUpdated: '2025-05-28 10:30'
-  }
-];
-
-/**
  * Main component for displaying progress projects
  * @returns {JSX.Element} The progress projects page component
  */
@@ -54,13 +24,17 @@ export default function ProgressProjects() {
   const [projects, setProjects] = useState([]);
   const router = useRouter();
 
-  /**
-   * Initialize projects state with mock data
-   * In a real app, this would fetch projects from a database
-   */
   useEffect(() => {
-    setProjects(mockProjects);
+    const stored = localStorage.getItem('projects');
+    if (stored) {
+      setProjects(JSON.parse(stored));
+    }
   }, []);
+
+  const saveProjects = (updatedProjects) => {  // Save updated projects to localStorage
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
+    setProjects(updatedProjects);  // Update state with new projects
+  };
 
    // Returns appropriate color for project status
   const getStatusColor = (status) => {

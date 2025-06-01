@@ -13,6 +13,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
+import Layout from '../components/Layout';
+import styles from '../components/Layout.module.css';
 
 
 
@@ -36,26 +38,28 @@ export default function Clean() {
   ];
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>
-        Clean Up
-      </h1>
-      <p style={styles.description}>
-        Now that it's empty, give your {zoneName} a quick wipe down. Get rid of dust, crumbs, etc
-      </p>
+    <Layout>
+      <div style={inlineStyles.container}>
+        <h1 style={inlineStyles.heading}>
+          Clean Up
+        </h1>
+        <p style={inlineStyles.description}>
+          Now that it's empty, give your {zoneName} a quick wipe down. Get rid of dust, crumbs, etc
+        </p>
 
-      {/* Calling EncouragementPopup component and passing messages array as argument */}
-      <EncouragementPopup messages={cleanMessages} />
+        {/* Calling EncouragementPopup component and passing messages array as argument */}
+        <EncouragementPopup messages={cleanMessages} />
 
-      <button style={styles.button} onClick={() => router.push('/categorize')}>
-        I'm ready to categorize
-      </button>
-    </div>
+        <button style={inlineStyles.button} onClick={() => router.push('/categorize')}>
+          I'm ready to categorize
+        </button>
+      </div>
+    </Layout>
   );
 }
 
-// Inline styles for layout and text
-const styles = {
+// Optional: simple inline styling
+const inlineStyles = {
   container: {
     height: '100vh',                      // Full screen height
     display: 'flex',                      // Use flexbox layout

@@ -13,6 +13,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import Layout from '../components/Layout';
+import styles from '../components/Layout.module.css';
 
 /**
  * Mock data representing ongoing organizing projects
@@ -86,41 +88,43 @@ export default function ProgressProjects() {
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Ongoing Projects</h1>
-      
-      {projects.length === 0 ? (
-        <p style={styles.noProjects}>No ongoing projects found. Start a new project from the menu.</p>
-      ) : (
-        <div style={styles.projectsList}>
-          {projects.map((project) => (
-            <div key={project.id} style={styles.projectCard}>
-              <div style={styles.projectHeader}>
-                <h2 style={styles.projectName}>{project.zoneName}</h2>
-                <span style={{ ...styles.status, backgroundColor: getStatusColor(project.status) }}>
-                  {project.status.replace('-', ' ').toUpperCase()}
-                </span>
+    <Layout>
+      <div style={inlineStyles.container}>
+        <h1 style={inlineStyles.heading}>Ongoing Projects</h1>
+        
+        {projects.length === 0 ? (
+          <p style={inlineStyles.noProjects}>No ongoing projects found. Start a new project from the menu.</p>
+        ) : (
+          <div style={inlineStyles.projectsList}>
+            {projects.map((project) => (
+              <div key={project.id} style={inlineStyles.projectCard}>
+                <div style={inlineStyles.projectHeader}>
+                  <h2 style={inlineStyles.projectName}>{project.zoneName}</h2>
+                  <span style={{ ...inlineStyles.status, backgroundColor: getStatusColor(project.status) }}>
+                    {project.status.replace('-', ' ').toUpperCase()}
+                  </span>
+                </div>
+                
+                <div style={inlineStyles.projectDetails}>
+                  <p><strong>Started:</strong> {new Date(project.startDate).toLocaleDateString()}</p>
+                  <p><strong>Current Step:</strong> {getStepName(project.currentStep)}</p>
+                  <p><strong>Last Updated:</strong> {new Date(project.lastUpdated).toLocaleString()}</p>
+                </div>
+                
+                {/* Navigate to the correct step based on currentStep */}
+                <Link href={`/zone?zoneName=${encodeURIComponent(project.zoneName)}&step=${project.currentStep}`}>
+                  <button style={inlineStyles.resumeButton}>Resume Project</button>
+                </Link>
               </div>
-              
-              <div style={styles.projectDetails}>
-                <p><strong>Started:</strong> {new Date(project.startDate).toLocaleDateString()}</p>
-                <p><strong>Current Step:</strong> {getStepName(project.currentStep)}</p>
-                <p><strong>Last Updated:</strong> {new Date(project.lastUpdated).toLocaleString()}</p>
-              </div>
-              
-              {/* Navigate to the correct step based on currentStep */}
-              <Link href={`/zone?zoneName=${encodeURIComponent(project.zoneName)}&step=${project.currentStep}`}>
-                <button style={styles.resumeButton}>Resume Project</button>
-              </Link>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </Layout>
   );
 }
-// inline styles for layout and text
-const styles = {
+// Optional: simple inline styling
+const inlineStyles = {
   container: {
     padding: '2rem',
     maxWidth: '800px',

@@ -13,7 +13,7 @@ export default function Menu() {
         Start New Project
       </button>
 
-      <button style={styles.button}>
+      <button style={styles.button} onClick={() => router.push('/progressProjects')}>
         Continue Existing Project
       </button>
 

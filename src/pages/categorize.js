@@ -12,6 +12,8 @@
 'use client'; // Marks this as a Client Component for interactive features
 import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
+import Layout from '../components/Layout';
+import styles from '../components/Layout.module.css';
 
 
 
@@ -42,28 +44,28 @@ export default function Categorize() {
 
   // Main container with full viewport height and centered content
   return (
-    <div style={styles.container}>
-      {/* Main heading for the categorization section */}
-      <h1 style={styles.heading}>
-        Categorize Items
-      </h1>
-      {/* Description text explaining the purpose of this section */}
-      <p style={styles.description}>
-        Now group your 'KEEP' items. Pens with pens, spices with spices, etc
-      </p>
+    <Layout>
+      <div style={inlineStyles.container}>
+        <h1 style={inlineStyles.heading}>
+          Categorize Items
+        </h1>
+        <p style={inlineStyles.description}>
+          Now group your 'KEEP' items. Pens with pens, spices with spices, etc
+        </p>
 
-      {/* Calling EncouragementPopup component and passing messages array as argument */}
-      <EncouragementPopup messages={categorizeMessages} />
+        {/* Calling EncouragementPopup component and passing messages array as argument */}
+        <EncouragementPopup messages={categorizeMessages} />
 
-      <button style={styles.button} onClick={toReturn}>
-        The items are categorized!
-      </button>
-    </div>
+        <button style={inlineStyles.button} onClick={toReturn}>
+          The items are categorized!
+        </button>
+      </div>
+    </Layout>
   );
 }
 
-// Inline styles for layout and text
-const styles = {
+// Optional: simple inline styling
+const inlineStyles = {
   container: {
     height: '100vh', // Full viewport height
     display: 'flex', // Flexbox layout for centering

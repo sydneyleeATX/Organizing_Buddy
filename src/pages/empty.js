@@ -2,12 +2,47 @@
 import React from 'react';
 import { useRouter } from 'next/router'; // Import Next.js' router for navigation
 import EncouragementPopup from '../components/encourage';
+import Layout from '../components/Layout';
+import styles from '../components/Layout.module.css';
 
 // Menu component with navigation buttons
 export default function Empty() {
   const router = useRouter();  // Initialize the router instance
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
 
+// Optional: simple inline styling
+const inlineStyles = {
+  container: {
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '2rem',
+    backgroundColor: '#f0f2f5',
+  },
+  heading: {
+    fontSize: '2rem',
+    color: '#333',
+    marginBottom: '1rem',
+  },
+  description: {
+    fontSize: '1.1rem',
+    color: '#333',
+    marginBottom: '2rem',
+  },
+  button: {
+    padding: '1rem 2rem',
+    fontSize: '1rem',
+    borderRadius: '8px',
+    border: 'none',
+    cursor: 'pointer',
+    backgroundColor: '#007bff',
+    color: 'white',
+    width: '250px',
+    transition: 'background-color 0.2s',
+  },
+};
 
   // Messages for the encouragement popup
   const emptyMessages = [
@@ -24,54 +59,23 @@ export default function Empty() {
   ];
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.message}>
-        Empty 
-      </h1>
-      <p style={styles.description}>
-        Take everything out of your {zoneName}. Put it on a clear surface nearby.
-      </p>
+    <Layout>
+      <div style={inlineStyles.container}>
+        <h1 style={inlineStyles.message}>
+          Empty 
+        </h1>
+        <p style={inlineStyles.description}>
+          Take everything out of your {zoneName}. Put it on a clear surface nearby.
+        </p>
 
-      {/* Calling EncouragementPopup component and passing messages array as argument */}
-      <EncouragementPopup messages={emptyMessages} />
+        {/* Calling EncouragementPopup component and passing messages array as argument */}
+        <EncouragementPopup messages={emptyMessages} />
 
-      {/* Button to start a new project by navigating to /declutter */}
-      <button style={styles.button} onClick={() => router.push('/declutter')}>
-        I'm ready to sort
-      </button>
-    </div>
+        {/* Button to start a new project by navigating to /declutter */}
+        <button style={inlineStyles.button} onClick={() => router.push('/declutter')}>
+          I'm ready to sort
+        </button>
+      </div>
+    </Layout>
   );
 }
-
-
-// Optional: simple inline styling
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    textAlign: 'center',
-    padding: '2rem',
-  },
-  message: {
-    fontSize: '1.5rem',
-    marginBottom: '2rem',
-    color: '#333',
-  },
-  description: {
-    fontSize: '1.1rem',
-    color: '#333',
-    marginBottom: '2rem',
-  },
-  button: {
-    padding: '1rem 2rem',
-    fontSize: '1rem',
-    borderRadius: '8px',
-    border: 'none',
-    cursor: 'pointer',
-    backgroundColor: '#007bff',
-    color: 'white',
-  },
-};

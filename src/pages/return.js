@@ -12,6 +12,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
+import Layout from '../components/Layout';
+import styles from '../components/Layout.module.css';
 
 export default function Return() {
   const router = useRouter();
@@ -32,31 +34,33 @@ export default function Return() {
   ];
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>
-        Return Items
-      </h1>
-      <p style={styles.description}>
-        Put your categorized items back in your {zoneName}. Think about
-      </p>
-      <ul style={styles.ul}>
-        <li>Easy access: What do you use most often?</li>
-        <li>Vertical space: Can you stack items or use risers?</li>
-      </ul>
+    <Layout>
+      <div style={inlineStyles.container}>
+        <h1 style={inlineStyles.heading}>
+          Return Items
+        </h1>
+        <p style={inlineStyles.description}>
+          Put your categorized items back in your {zoneName}. Think about
+        </p>
+        <ul style={inlineStyles.ul}>
+          <li>Easy access: What do you use most often?</li>
+          <li>Vertical space: Can you stack items or use risers?</li>
+        </ul>
 
-      {/* Calling EncouragementPopup component and passing messages array as argument */}
-      <EncouragementPopup messages={returnMessages} />
+        {/* Calling EncouragementPopup component and passing messages array as argument */}
+        <EncouragementPopup messages={returnMessages} />
 
-      <button style={styles.button} onClick={() => router.push('/complete')}>
-        All items are returned!
-      </button>
-    </div>
+        <button style={inlineStyles.button} onClick={() => router.push('/complete')}>
+          All items are returned!
+        </button>
+      </div>
+    </Layout>
   );
 }
 
 
-// Inline styles for layout and text
-const styles = {
+// Optional: simple inline styling
+const inlineStyles = {
   container: {
     height: '100vh',                      // Full screen height
     display: 'flex',                      // Use flexbox layout

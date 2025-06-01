@@ -14,6 +14,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
+import Layout from '../components/Layout';
+import styles from '../components/Layout.module.css';
 
 export default function Declutter() {
   const router = useRouter();
@@ -41,43 +43,44 @@ export default function Declutter() {
 
   // Main container with full viewport height and centered content
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>
-        Sort & Declutter
-      </h1>
-      <div style={styles.container}>
-        <div style={{ ...styles.card, backgroundColor: '#d4edda' }}>
-          <h2 style={styles.header}>KEEP</h2>
-          <p style={styles.description}>It belongs here & you use/love it.</p>
-        </div>
+    <Layout>
+      <div style={inlineStyles.container}>
+        <h1 style={inlineStyles.h1}>
+          Sort & Declutter
+        </h1>
+        <div style={inlineStyles.p}>
+          <div style={{ ...styles.card, backgroundColor: '#d4edda' }}>
+            <h2 style={styles.header}>KEEP</h2>
+            <p style={styles.description}>It belongs here & you use/love it.</p>
+          </div>
 
-        <div style={{ ...styles.card, backgroundColor: '#f8d7da' }}>
-          <h2 style={styles.header}>TOSS</h2>
-          <p style={styles.description}>It's broken, expired, or truly not needed.</p>
-        </div>
+          <div style={{ ...styles.card, backgroundColor: '#f8d7da' }}>
+            <h2 style={styles.header}>TOSS</h2>
+            <p style={styles.description}>It's broken, expired, or truly not needed.</p>
+          </div>
 
-        <div style={{ ...styles.card, backgroundColor: '#d1ecf1' }}>
-          <h2 style={styles.header}>RELOCATE</h2>
-          <p style={styles.description}>It belongs somewhere else in your home.</p>
+          <div style={{ ...styles.card, backgroundColor: '#d1ecf1' }}>
+            <h2 style={styles.header}>RELOCATE</h2>
+            <p style={styles.description}>It belongs somewhere else in your home.</p>
+          </div>
         </div>
 
         {/* Calling EncouragementPopup component and passing messages array as argument */}
-        <EncouragementPopup messages={declutterMessages} />   
-              
-                   
+        <EncouragementPopup messages={declutterMessages} />
+        
         <button 
-          style={styles.button} 
+          style={inlineStyles.button} 
           onClick={toClean}
         >
           Next
         </button>
       </div>
-    </div>
+    </Layout>
   );
 }
 
-// Inline styles for layout and text
-const styles = {
+// Optional: simple inline styling
+const inlineStyles = {
   container: {
     height: '100vh',                      // Full screen height
     display: 'flex',                      // Use flexbox layout
@@ -87,12 +90,12 @@ const styles = {
     padding: '2rem',                     // Padding around content
     backgroundColor: '#f0f2f5',          // Light background color
   },
-  heading: {
+  h1: {
     fontSize: '2rem',                    // Large font size
     color: '#333',                       // Dark text color
     marginBottom: '1rem',                // Space below heading
   },
-  description: {
+  p: {
     fontSize: '1.1rem',                  // Standard font size
     color: '#333',                       // Text color
     marginBottom: '2rem',                // Space below description

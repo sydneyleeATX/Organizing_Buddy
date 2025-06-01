@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * @file Return.js
  * @description Page component for returning items to their proper places
@@ -8,16 +10,33 @@
  * - Maintaining organization
  */
 
-'use client';
-import React from 'react';
+
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
+import ImageUploader from '../components/ImageUpload';
+
+
 
 export default function Return() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space';
+  // State variables
+  const [itemsReturned, setItemsReturned] = useState('');
+  const [confirmedItemsReturned, setConfirmedItemsReturned] = useState(false);
+  const [confirmedPhotoUploaded, setConfirmedPhotoUploaded] = useState(false);
+
+  const handleConfirmItemsReturned = () => {
+    setItemsReturned('confirmed');
+    setConfirmedItemsReturned(true);
+  };
+
+  const handlePhotoConfirmed = () => {
+    setConfirmedPhotoUploaded(true);
+    router.push('/complete');
+  };
 
   // Messages for the encouragement popup
   const returnMessages = [
@@ -33,68 +52,86 @@ export default function Return() {
     "Congratulations! You've given your home and your belongings the clarity they deserve."
   ];
 
+  // Optional: simple inline styling
+  const inlineStyles = {
+    container: {
+      height: '100vh',                      // Full screen height
+      display: 'flex',                      // Use flexbox layout
+      flexDirection: 'column',             // Stack children vertically
+      justifyContent: 'center',            // Center content vertically
+      alignItems: 'center',                // Center content horizontally
+      padding: '2rem',                     // Padding around content
+      backgroundColor: '#f0f2f5',          // Light background color
+    },
+    heading: {
+      fontSize: '2rem',                    // Large font size
+      color: '#333',                       // Dark text color
+      marginBottom: '1rem',                // Space below heading
+    },
+    description: {
+      fontSize: '1.1rem',                  // Standard font size
+      color: '#333',                       // Text color
+      marginBottom: '2rem',                // Space below description
+    },
+    button: {
+      padding: '1rem 2rem',                // Padding inside button
+      fontSize: '1rem',                    // Standard font size
+      borderRadius: '8px',                 // Rounded corners
+      border: 'none',                      // No border
+      cursor: 'pointer',                   // Pointer cursor on hover
+      backgroundColor: '#007bff',          // Bootstrap blue
+      color: 'white',                      // White text
+      width: '250px',                      // Fixed width
+      transition: 'background-color 0.2s', // Smooth color transition
+    },
+    ul: {
+      listStyleType: 'circle',               // Hollow bullet points
+      marginBottom: '2rem',                // Space below list
+      fontSize: '1.1rem',                  // Standard font size
+      color: '#333',                       // Text color
+    },
+    p: {
+      fontSize: '1.1rem',                  // Standard font size
+      color: '#333',                       // Text color
+      marginBottom: '1rem',                // Space below paragraph
+    }
+  };
+
   return (
     <Layout>
       <div style={inlineStyles.container}>
         <h1 style={inlineStyles.heading}>
           Return Items
         </h1>
-        <p style={inlineStyles.description}>
-          Put your categorized items back in your {zoneName}. Think about
-        </p>
-        <ul style={inlineStyles.ul}>
-          <li>Easy access: What do you use most often?</li>
-          <li>Vertical space: Can you stack items or use risers?</li>
-        </ul>
 
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={returnMessages} />
 
-        <button style={inlineStyles.button} onClick={() => router.push('/complete')}>
-          All items are returned!
-        </button>
+        {!confirmedItemsReturned && (
+          <>
+            <p style={inlineStyles.description}>
+              Put your categorized items back in your {zoneName}. Think about
+            </p>
+            <ul style={inlineStyles.ul}>
+              <li>Easy access: What do you use most often?</li>
+              <li>Vertical space: Can you stack items or use risers?</li>
+            </ul>
+            <button style={inlineStyles.button} onClick={handleConfirmItemsReturned}>
+              All items are returned!
+            </button>
+          </>
+        )}
+        {confirmedItemsReturned && (
+          <>
+            <p style={inlineStyles.p}>
+              Upload a photo of your organized space!
+            </p>
+            <ImageUploader onImageConfirmed={handlePhotoConfirmed} />
+          </>
+        )}
+            
       </div>
     </Layout>
   );
 }
 
-
-// Optional: simple inline styling
-const inlineStyles = {
-  container: {
-    height: '100vh',                      // Full screen height
-    display: 'flex',                      // Use flexbox layout
-    flexDirection: 'column',             // Stack children vertically
-    justifyContent: 'center',            // Center content vertically
-    alignItems: 'center',                // Center content horizontally
-    padding: '2rem',                     // Padding around content
-    backgroundColor: '#f0f2f5',          // Light background color
-  },
-  heading: {
-    fontSize: '2rem',                    // Large font size
-    color: '#333',                       // Dark text color
-    marginBottom: '1rem',                // Space below heading
-  },
-  description: {
-    fontSize: '1.1rem',                  // Standard font size
-    color: '#333',                       // Text color
-    marginBottom: '2rem',                // Space below description
-  },
-  button: {
-    padding: '1rem 2rem',                // Padding inside button
-    fontSize: '1rem',                    // Standard font size
-    borderRadius: '8px',                 // Rounded corners
-    border: 'none',                      // No border
-    cursor: 'pointer',                   // Pointer cursor on hover
-    backgroundColor: '#007bff',          // Bootstrap blue
-    color: 'white',                      // White text
-    width: '250px',                      // Fixed width
-    transition: 'background-color 0.2s', // Smooth color transition
-  },
-  ul: {
-    listStyleType: 'circle',               // Hollow bullet points
-    marginBottom: '2rem',                // Space below list
-    fontSize: '1.1rem',                  // Standard font size
-    color: '#333',                       // Text color
-  },
-};

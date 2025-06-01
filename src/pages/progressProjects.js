@@ -25,9 +25,9 @@ export default function ProgressProjects() {
   const router = useRouter();
 
   useEffect(() => {
-    const stored = localStorage.getItem('projects');
+    const stored = localStorage.getItem('projects');  // Retrieve projects from localStorage
     if (stored) {
-      setProjects(JSON.parse(stored));
+      setProjects(JSON.parse(stored));  // Set projects state with stored data
     }
   }, []);
 
@@ -36,7 +36,16 @@ export default function ProgressProjects() {
     setProjects(updatedProjects);  // Update state with new projects
   };
 
-   // Returns appropriate color for project status
+  const handleDelete = (projectId) => {
+    const confirm = window.confirm("Are you sure you want to delete this project?");
+    if (!confirm) return;
+
+    // project deletion confirmed, update projects state and localStorage
+    const updatedProjects = projects.filter((project) => project.id !== projectId);
+    saveProjects(updatedProjects);
+  };
+
+  // Returns appropriate color for project status
   const getStatusColor = (status) => {
     switch (status) {
       case 'in-progress':
@@ -85,10 +94,17 @@ export default function ProgressProjects() {
                   <p><strong>Last Updated:</strong> {new Date(project.lastUpdated).toLocaleString()}</p>
                 </div>
                 
-                {/* Navigate to the correct step based on currentStep */}
-                <Link href={`/zone?zoneName=${encodeURIComponent(project.zoneName)}&step=${project.currentStep}`}>
-                  <button style={inlineStyles.resumeButton}>Resume Project</button>
-                </Link>
+                <div style={inlineStyles.actionButtons}>
+                  <Link href={`/zone?zoneName=${encodeURIComponent(project.zoneName)}&step=${project.currentStep}`}>
+                    <button style={inlineStyles.resumeButton}>Resume Project</button>
+                  </Link>
+                  <button 
+                    style={inlineStyles.deleteButton} 
+                    onClick={() => handleDelete(project.id)}
+                  >
+                    Delete Project
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -149,6 +165,21 @@ const inlineStyles = {
   },
   resumeButton: {
     backgroundColor: '#4CAF50',
+    color: '#fff',
+    padding: '0.75rem 1.5rem',
+    borderRadius: '4px',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    width: '100%'
+  },
+  actionButtons: {
+    display: 'flex',
+    gap: '1rem',
+    marginTop: '1rem'
+  },
+  deleteButton: {
+    backgroundColor: '#f44336',
     color: '#fff',
     padding: '0.75rem 1.5rem',
     borderRadius: '4px',

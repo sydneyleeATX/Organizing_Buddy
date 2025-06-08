@@ -101,8 +101,10 @@ export default function Zone() {
   };
 
   const createNewProject = (zoneName) => {
+    console.log('[createNewProject] Called with:', zoneName);
     const stored = localStorage.getItem('projects');
     const existingProjects = stored ? JSON.parse(stored) : [];
+    console.log('[createNewProject] Existing projects:', existingProjects);
     
     const newProject = {
       id: generateUniqueID(),
@@ -112,8 +114,10 @@ export default function Zone() {
       status: 'in-progress',
       lastUpdated: new Date().toISOString()
     };
+    console.log('[createNewProject] New project:', newProject);
 
     const updatedProjects = [...existingProjects, newProject];
+    console.log('[createNewProject] Updated projects array:', updatedProjects);
     localStorage.setItem('projects', JSON.stringify(updatedProjects));
   };
 
@@ -165,7 +169,7 @@ export default function Zone() {
             <p style={inlineStyles.p}>
               Great, we are organizing your {zoneName}!
             </p>                                              {/* ? is start of URL, $ separates parameter name from value*/}
-            <button style={inlineStyles.button} onClick={handleZoneConfirm}>
+            <button style={inlineStyles.button} onClick={() => handleZoneConfirm(zoneName)}>
               Let's Go!
             </button>
           </>

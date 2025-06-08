@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'; // Import Next.js' router for navigatio
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
+import { updateProjectStep } from '../utils/projectUtils';
 
 // Menu component with navigation buttons
 export default function Empty() {
@@ -44,7 +45,6 @@ const inlineStyles = {
   },
 };
 
-  // Messages for the encouragement popup
   const emptyMessages = [
     "You're doing the hard part — clearing the way!", 
     "Every item you remove makes space for clarity.", 
@@ -58,11 +58,23 @@ const inlineStyles = {
     "You're making real progress — keep clearing!"
   ];
 
+  const handleNextStep = () => {
+    // Ensure zoneName is valid. This is crucial if empty.js is where zoneName
+    // is first expected from a URL query (e.g., after project selection).
+    if (!zoneName || (zoneName === 'your space' && !router.query.zoneName)) {
+      console.error("CRITICAL: handleNextStep in empty.js - zoneName is missing or default without a query parameter. Aborting.", "Current zoneName:", zoneName, "Full router.query:", router.query);
+      alert("Project zone not identified in Empty. Please go back and select a project/zone.");
+      return; 
+    }
+    updateProjectStep(zoneName, 'declutter');
+    router.push(`/declutter?zoneName=${encodeURIComponent(zoneName)}`);
+  };
+
   return (
     <Layout>
       <div style={inlineStyles.container}>
-        <h1 style={inlineStyles.message}>
-          Empty 
+        <h1 style={inlineStyles.heading}>
+          Empty {zoneName}
         </h1>
         <p style={inlineStyles.description}>
           Take everything out of your {zoneName}. Put it on a clear surface nearby.
@@ -72,7 +84,7 @@ const inlineStyles = {
         <EncouragementPopup messages={emptyMessages} />
 
         {/* Button to start a new project by navigating to /declutter */}
-        <button style={inlineStyles.button} onClick={() => router.push('/declutter')}>
+        <button style={inlineStyles.button} onClick={handleNextStep}>
           I'm ready to sort
         </button>
       </div>

@@ -13,6 +13,9 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import CelebrationPage from '../components/Confetti';
+import { updateProjectStep } from '../utils/projectUtils';
+import Layout from '../components/Layout';
+import styles from '../components/Layout.module.css';
 
 
 
@@ -21,20 +24,22 @@ export default function Complete() {
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
   
   return (
-    <div style={styles.container}>
-      <CelebrationPage />  {/* CelebrationPage component, use the slash because it is a self-closing HTML tag */}
-      <h1 style={styles.heading}>
-        Project Complete
-      </h1>
-      <p style={styles.description}>
-        Great job! Your project is complete!
-      </p>
-    </div>
+    <Layout>
+      <div style={inline_styles.container}>
+        <CelebrationPage />  {/* CelebrationPage component, use the slash because it is a self-closing HTML tag */}
+        <h1 style={inline_styles.heading}>
+          Project Complete
+        </h1>
+        <p style={inline_styles.description}>
+          Great job! Your project is complete!
+        </p>
+      </div>
+    </Layout>
   );
 }
 
 // Inline styles for layout and text
-const styles = {
+const inline_styles = {
   container: {
     height: '100vh',                      // Full screen height
     display: 'flex',                      // Use flexbox layout

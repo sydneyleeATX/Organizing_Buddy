@@ -10,22 +10,18 @@
  */
 
 'use client'; // Marks this as a Client Component for interactive features
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-
+import { updateProjectStep } from '../utils/projectUtils';
 
 
 export default function Categorize() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
-
-  {/* action performed when next button is clicked */}
-  const toReturn = () => {
-    console.log('Navigating to return page');
-    router.push('/return');
-  };
+  console.log('Categorize component rendering. zoneName from query:', zoneName, 'Full query:', router.query);
 
 
   // Messages for the encouragement popup
@@ -42,10 +38,28 @@ export default function Categorize() {
     "A place for everything, and everything in its place – you're the architect of that order!"
   ];
 
+  const handleNextStep = () => {
+    console.log('handleNextStep called. Current zoneName:', zoneName, "Router query:", router.query);
+    if (!zoneName || (zoneName === 'your space' && !router.query.zoneName)) {
+        console.error("CRITICAL: handleNextStep in categorize.js - zoneName is missing or default without a query parameter. Aborting step update and navigation.", "Current zoneName:", zoneName, "Full router.query:", router.query);
+        alert("There was an issue identifying your project zone. Please go back and try again.");
+        return; 
+    }
+    try {
+        updateProjectStep(zoneName, 'return');
+        console.log(`Updated project step to 'return' for zone: ${zoneName}. Navigating...`);
+        router.push(`/return?zoneName=${encodeURIComponent(zoneName)}`);
+    } catch (error) {
+        console.error("Error during updateProjectStep or navigation in categorize.js:", error, "ZoneName:", zoneName);
+        alert("An error occurred while saving your progress. Please try again.");
+    }
+  };
+
   // Main container with full viewport height and centered content
   return (
     <Layout>
       <div style={inlineStyles.container}>
+      {/* Main heading for the categorization section */}
         <h1 style={inlineStyles.heading}>
           Categorize Items
         </h1>
@@ -56,7 +70,7 @@ export default function Categorize() {
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={categorizeMessages} />
 
-        <button style={inlineStyles.button} onClick={toReturn}>
+        <button style={inlineStyles.button} onClick={handleNextStep}>
           The items are categorized!
         </button>
       </div>

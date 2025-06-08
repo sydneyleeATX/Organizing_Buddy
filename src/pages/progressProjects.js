@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
+import { loadProjects, saveProjects as saveProjectsToStorage, updateProjectStep, deleteProject } from '../utils/projectUtils';
 
 /**
  * Main component for displaying progress projects
@@ -25,25 +26,31 @@ export default function ProgressProjects() {
   const router = useRouter();
 
   useEffect(() => {
-    const stored = localStorage.getItem('projects');  // Retrieve projects from localStorage
-    if (stored) {
-      setProjects(JSON.parse(stored));  // Set projects state with stored data
-    }
+    const projects = loadProjects();
+    console.log('[ProgressProjects] Loaded from localStorage:', projects);
+    setProjects(projects);
   }, []);
 
-  const saveProjects = (updatedProjects) => {  // Save updated projects to localStorage
-    localStorage.setItem('projects', JSON.stringify(updatedProjects));
-    setProjects(updatedProjects);  // Update state with new projects
+  // Function to update projects in both state and localStorage
+  const updateProjects = (updatedProjects) => {
+    console.log('[ProgressProjects] Saving to localStorage:', updatedProjects);
+    saveProjectsToStorage(updatedProjects);
+    setProjects(updatedProjects);
   };
 
   const handleDelete = (projectId) => {
     const confirm = window.confirm("Are you sure you want to delete this project?");
     if (!confirm) return;
 
-    // project deletion confirmed, update projects state and localStorage
-    const updatedProjects = projects.filter((project) => project.id !== projectId);
-    saveProjects(updatedProjects);
+    // Delete the project directly from localStorage
+    deleteProject(projectId);
+    
+    // Update the local state
+    const updatedProjects = projects.filter(project => project.id !== projectId);
+    setProjects(updatedProjects);
   };
+
+
 
   // Returns appropriate color for project status
   const getStatusColor = (status) => {
@@ -93,9 +100,9 @@ export default function ProgressProjects() {
                   <p><strong>Current Step:</strong> {getStepName(project.currentStep)}</p>
                   <p><strong>Last Updated:</strong> {new Date(project.lastUpdated).toLocaleString()}</p>
                 </div>
-                
+                {/* Navigate buttons to the correct step based on currentStep */}
                 <div style={inlineStyles.actionButtons}>
-                  <Link href={`/zone?zoneName=${encodeURIComponent(project.zoneName)}&step=${project.currentStep}`}>
+                  <Link href={`/${project.currentStep}?zoneName=${encodeURIComponent(project.zoneName)}`}>
                     <button style={inlineStyles.resumeButton}>Resume Project</button>
                   </Link>
                   <button 
@@ -166,26 +173,26 @@ const inlineStyles = {
   resumeButton: {
     backgroundColor: '#4CAF50',
     color: '#fff',
-    padding: '0.75rem 1.5rem',
+    padding: '0.5rem 1rem',
     borderRadius: '4px',
     border: 'none',
     cursor: 'pointer',
-    fontSize: '1rem',
-    width: '100%'
+    fontSize: '0.875rem',
+    width: 'auto'
   },
   actionButtons: {
     display: 'flex',
-    gap: '1rem',
+    gap: '0.5rem',
     marginTop: '1rem'
   },
   deleteButton: {
     backgroundColor: '#f44336',
     color: '#fff',
-    padding: '0.75rem 1.5rem',
+    padding: '0.5rem 1rem',
     borderRadius: '4px',
     border: 'none',
     cursor: 'pointer',
-    fontSize: '1rem',
-    width: '100%'
+    fontSize: '0.875rem',
+    width: 'auto'
   }
 };

@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-
+import { updateProjectStep } from '../utils/projectUtils';
 
 
 
@@ -23,7 +23,13 @@ export default function Clean() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space';
 
-  // Messages for the encouragement popup
+  const handleNextStep = () => {
+    updateProjectStep(zoneName, 'categorize');
+    const navigationPath = `/categorize?zoneName=${encodeURIComponent(zoneName)}`;
+    console.log('[clean.js] Navigating with zoneName:', zoneName, 'Attempting to push to path:', navigationPath);
+    router.push(navigationPath);
+  };
+
   const cleanMessages = [
     "Every swipe brings you closer to a sparkling space.", 
     "A clean home is a clear mind – you're investing in your peace.", 
@@ -50,13 +56,15 @@ export default function Clean() {
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={cleanMessages} />
 
-        <button style={inlineStyles.button} onClick={() => router.push('/categorize')}>
+        <button style={inlineStyles.button} onClick={handleNextStep}>
           I'm ready to categorize
         </button>
       </div>
     </Layout>
   );
 }
+
+
 
 // Optional: simple inline styling
 const inlineStyles = {

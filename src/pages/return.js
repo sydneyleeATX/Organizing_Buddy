@@ -17,7 +17,7 @@ import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import ImageUploader from '../components/ImageUpload';
-
+import { updateProjectStep } from '../utils/projectUtils';
 
 
 export default function Return() {
@@ -35,7 +35,12 @@ export default function Return() {
 
   const handlePhotoConfirmed = () => {
     setConfirmedPhotoUploaded(true);
-    router.push('/complete');
+    handleNextStep();
+  };
+
+  const handleNextStep = () => {
+    updateProjectStep(zoneName, 'complete');
+    router.push(`/complete?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
   // Messages for the encouragement popup

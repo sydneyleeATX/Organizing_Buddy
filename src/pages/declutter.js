@@ -16,16 +16,13 @@ import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
+import { updateProjectStep } from '../utils/projectUtils';
+
 
 export default function Declutter() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
 
-  {/* action performed when next button is clicked */}
-  const toClean = () => {
-    console.log('Navigating to clean page');
-    router.push('/clean');
-  };
 
   // Messages for the encouragement popup
   const declutterMessages = [
@@ -41,14 +38,25 @@ export default function Declutter() {
     "You're building a functional, peaceful environment, one sorted item at a time."
   ];
 
+  const handleNextStep = () => {
+    // First, ensure zoneName is valid before trying to use it or pass it
+    if (!zoneName || (zoneName === 'your space' && !router.query.zoneName)) {
+      console.error("CRITICAL: handleNextStep in declutter.js - zoneName is missing or default without a query parameter. Aborting step update and navigation.", "Current zoneName:", zoneName, "Full router.query:", router.query);
+      alert("There was an issue identifying your project zone in Declutter. Please go back and try again.");
+      return; 
+    }
+    updateProjectStep(zoneName, 'clean');
+    router.push(`/clean?zoneName=${encodeURIComponent(zoneName)}`);
+  };
+
   // Main container with full viewport height and centered content
   return (
     <Layout>
       <div style={inlineStyles.container}>
-        <h1 style={inlineStyles.h1}>
+        <h1 style={inlineStyles.heading}>
           Sort & Declutter
         </h1>
-        <div style={inlineStyles.p}>
+        <div style={inlineStyles.cardContainer}>
           <div style={{ ...styles.card, backgroundColor: '#d4edda' }}>
             <h2 style={styles.header}>KEEP</h2>
             <p style={styles.description}>It belongs here & you use/love it.</p>
@@ -68,10 +76,7 @@ export default function Declutter() {
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={declutterMessages} />
         
-        <button 
-          style={inlineStyles.button} 
-          onClick={toClean}
-        >
+        <button style={inlineStyles.button} onClick={handleNextStep}>
           Next
         </button>
       </div>
@@ -90,12 +95,12 @@ const inlineStyles = {
     padding: '2rem',                     // Padding around content
     backgroundColor: '#f0f2f5',          // Light background color
   },
-  h1: {
+  heading: {
     fontSize: '2rem',                    // Large font size
     color: '#333',                       // Dark text color
     marginBottom: '1rem',                // Space below heading
   },
-  p: {
+  description: {
     fontSize: '1.1rem',                  // Standard font size
     color: '#333',                       // Text color
     marginBottom: '2rem',                // Space below description

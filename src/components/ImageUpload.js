@@ -33,15 +33,39 @@ export default function ImageUploader({ onImageConfirmed }) {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result); // Preview the image as a data URL
-        if (onImageConfirmed) {
-          onImageConfirmed(reader.result); // Pass the data URL to parent
-        }
+        // Create an image to resize/compress
+        const img = new window.Image();
+        img.onload = () => {
+          // Resize logic
+          const MAX_DIM = 800;
+          let { width, height } = img;
+          if (width > MAX_DIM || height > MAX_DIM) {
+            if (width > height) {
+              height = Math.round(height * (MAX_DIM / width));
+              width = MAX_DIM;
+            } else {
+              width = Math.round(width * (MAX_DIM / height));
+              height = MAX_DIM;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          // Compress to JPEG at 0.8 quality
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          setImagePreview(dataUrl);
+          if (onImageConfirmed) {
+            onImageConfirmed(dataUrl);  // pass the data URL to the parent component
+          }
+        };
+        img.src = reader.result;
       };
       reader.readAsDataURL(file);
+      setImageFile(file);
     } else {
-      // Clear both states if no file is selected
-      setImageFile(null);
+      // Clear both states if no file is selected      setImageFile(null);
       setImagePreview(null);
     }
   };

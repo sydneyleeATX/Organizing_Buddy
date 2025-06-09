@@ -82,11 +82,12 @@ export default function ProgressProjects() {
       <div style={inlineStyles.container}>
         <h1 style={inlineStyles.heading}>Ongoing Projects</h1>
         
-        {projects.length === 0 ? (
+        {/* filter out projects that are completed */}
+        {projects.filter(p => p.status !== 'completed').length === 0 ? (
           <p style={inlineStyles.noProjects}>No ongoing projects found. Start a new project from the menu.</p>
         ) : (
           <div style={inlineStyles.projectsList}>
-            {projects.map((project) => (
+            {projects.filter(p => p.status !== 'completed').map((project) => (
               <div key={project.id} style={inlineStyles.projectCard}>
                 <div style={inlineStyles.projectHeader}>
                   <h2 style={inlineStyles.projectName}>{project.zoneName}</h2>

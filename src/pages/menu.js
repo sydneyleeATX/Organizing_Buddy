@@ -17,7 +17,7 @@ export default function Menu() {
         Continue Existing Project
       </button>
 
-      <button style={styles.button}>
+      <button style={styles.button} onClick={() => router.push('/pastProjects')}>
         Completed Projects
       </button>
     </div>

@@ -31,9 +31,14 @@ export default function ImageUploader({ onImageConfirmed }) {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Store the file and create a preview URL
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result); // Preview the image as a data URL
+        if (onImageConfirmed) {
+          onImageConfirmed(reader.result); // Pass the data URL to parent
+        }
+      };
+      reader.readAsDataURL(file);
     } else {
       // Clear both states if no file is selected
       setImageFile(null);
@@ -74,8 +79,8 @@ export default function ImageUploader({ onImageConfirmed }) {
             src={imagePreview} 
             alt="Preview" 
             style={styles.previewImage}
-          />
-          <p style={styles.fileName}>{imageFile.name}</p>
+          />  {/* show file name only if file selected*/}
+          {imageFile && <p style={styles.fileName}>{imageFile.name}</p>}
           {!isUploadConfirmed && (
             <button 
               onClick={handleUpload} 

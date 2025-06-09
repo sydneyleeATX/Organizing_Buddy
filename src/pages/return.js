@@ -33,7 +33,17 @@ export default function Return() {
     setConfirmedItemsReturned(true);
   };
 
-  const handlePhotoConfirmed = () => {
+  const { loadProjects, saveProjects } = require('../utils/projectUtils');
+
+  const handlePhotoConfirmed = (photoDataUrl) => {
+    // Save the after photo (endPhoto) to the correct project in localStorage
+    const projects = loadProjects();
+    const updatedProjects = projects.map(project =>
+      project.zoneName === zoneName
+        ? { ...project, endPhoto: photoDataUrl }
+        : project
+    );
+    saveProjects(updatedProjects);
     setConfirmedPhotoUploaded(true);
     handleNextStep();
   };

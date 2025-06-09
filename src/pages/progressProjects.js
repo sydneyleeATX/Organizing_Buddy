@@ -93,6 +93,26 @@ export default function ProgressProjects() {
                   <span style={{ ...inlineStyles.status, backgroundColor: getStatusColor(project.status) }}>
                     {project.status.replace('-', ' ').toUpperCase()}
                   </span>
+                  {project.startPhoto && (
+  <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+    <img 
+      src={project.startPhoto} 
+      alt={`Before photo of ${project.zoneName}`} 
+      style={{ maxWidth: '100px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+    />
+    <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>Before photo</div>
+    {project.endPhoto && (
+      <>
+        <img
+          src={project.endPhoto}
+          alt={`After photo of ${project.zoneName}`}
+          style={{ maxWidth: '100px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', marginTop: '0.5rem' }}
+        />
+        <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>After photo</div>
+      </>
+    )}
+  </div>
+)}
                 </div>
                 
                 <div style={inlineStyles.projectDetails}>

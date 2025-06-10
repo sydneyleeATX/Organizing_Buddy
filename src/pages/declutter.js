@@ -11,17 +11,23 @@
  */
 
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
+import ChatExpert from '../components/ChatExpert';
+import DeclutterTips from '../components/DeclutterTips';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import { updateProjectStep } from '../utils/projectUtils';
 
 
+
 export default function Declutter() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
+  const [fabOpen, setFabOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [tipsOpen, setTipsOpen] = useState(false);
 
 
   // Messages for the encouragement popup
@@ -79,6 +85,22 @@ export default function Declutter() {
         <button style={inlineStyles.button} onClick={handleNextStep}>
           Next
         </button>
+        {/* Floating button in bottom right corner */}
+        <button style={inlineStyles.fabButton} onClick={() => setFabOpen(true)}>
+          +
+        </button>
+        {fabOpen && (
+          <div style={inlineStyles.fabPopupOverlay} onClick={() => setFabOpen(false)}>
+            <div style={inlineStyles.fabPopup} onClick={e => e.stopPropagation()}>
+              <button style={inlineStyles.closeFabPopup} onClick={() => setFabOpen(false)}>&times;</button>
+              <h3 style={{marginBottom: '1rem'}}>Quick Actions</h3>
+              <button style={inlineStyles.fabPopupButton} onClick={() => { setFabOpen(false); setChatOpen(true); }}>Ask an Expert</button>
+              <button style={inlineStyles.fabPopupButton} onClick={() => { setFabOpen(false); setTipsOpen(true); }}>Organizing Tips</button>
+            </div>
+          </div>
+        )}
+        <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
+        <DeclutterTips open={tipsOpen} onClose={() => setTipsOpen(false)} />
       </div>
     </Layout>
   );
@@ -128,4 +150,66 @@ const inlineStyles = {
     width: '250px',                      // Fixed width
     transition: 'background-color 0.2s', // Smooth color transition
   },
-};
+  fabButton: {
+    position: 'fixed',
+    bottom: '32px',
+    right: '32px',
+    width: '56px',
+    height: '56px',
+    borderRadius: '50%',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+    fontSize: '2rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    zIndex: 1000
+  },
+  fabPopupOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    background: 'rgba(0,0,0,0.2)',
+    zIndex: 2000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fabPopup: {
+    background: 'white',
+    borderRadius: '12px',
+    padding: '2rem 1.5rem 1.5rem 1.5rem',
+    boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    minWidth: '240px',
+    position: 'relative',
+  },
+  fabPopupButton: {
+    width: '100%',
+    padding: '0.75rem 1rem',
+    margin: '0.5rem 0',
+    borderRadius: '6px',
+    border: 'none',
+    backgroundColor: '#007bff',
+    color: 'white',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    transition: 'background 0.2s',
+  },
+  closeFabPopup: {
+    position: 'absolute',
+    top: '8px',
+    right: '12px',
+    background: 'none',
+    border: 'none',
+    color: '#888',
+    fontSize: '1.5rem',
+    cursor: 'pointer',
+  }};

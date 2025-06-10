@@ -9,7 +9,7 @@ const nextConfig = {
     config.resolve.alias['@'] = __dirname + '/src'
     return config
   },
-  output: 'export',
+  // output: 'export',
   distDir: '.next'
 }
 

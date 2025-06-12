@@ -18,6 +18,7 @@ import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import ImageUploader from '../components/ImageUpload';
 import { updateProjectStep } from '../utils/projectUtils';
+import ProductSuggestions from '../components/ProductSuggestions';
 
 
 export default function Return() {
@@ -27,6 +28,9 @@ export default function Return() {
   const [itemsReturned, setItemsReturned] = useState('');
   const [confirmedItemsReturned, setConfirmedItemsReturned] = useState(false);
   const [confirmedPhotoUploaded, setConfirmedPhotoUploaded] = useState(false);
+  const [fabOpen, setFabOpen] = useState(false);
+  const [productSuggestionsOpen, setProductSuggestionsOpen] = useState(false);
+  
 
   const handleConfirmItemsReturned = () => {
     setItemsReturned('confirmed');
@@ -109,7 +113,59 @@ export default function Return() {
       fontSize: '1.1rem',                  // Standard font size
       color: '#333',                       // Text color
       marginBottom: '1rem',                // Space below paragraph
-    }
+    },
+    fabButton: {
+      position: 'fixed',
+      bottom: '2rem',
+      right: '2rem',
+      zIndex: 1000,
+      width: '56px',
+      height: '56px',
+      fontSize: '1.5rem',
+      borderRadius: '50%',
+      border: 'none',
+      cursor: 'pointer',
+      backgroundColor: '#007bff',
+      color: 'white',
+      transition: 'background-color 0.2s',
+    },
+    fabPopupOverlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      zIndex: 999,
+    },
+    fabPopup: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      padding: '2rem',
+      backgroundColor: '#fff',
+      borderRadius: '8px',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+      zIndex: 1000,
+    },
+    closeFabPopup: {
+      position: 'absolute',
+      top: '1rem',
+      right: '1rem',
+      cursor: 'pointer',
+    },
+    fabPopupButton: {
+      padding: '1rem 2rem',
+      fontSize: '1rem',
+      borderRadius: '8px',
+      border: 'none',
+      cursor: 'pointer',
+      backgroundColor: '#007bff',
+      color: 'white',
+      width: '250px',
+      transition: 'background-color 0.2s',
+    },
   };
 
   return (
@@ -146,6 +202,32 @@ export default function Return() {
         )}
             
       </div>
+
+      {/* Floating button in bottom right corner */}
+      <button style={inlineStyles.fabButton} onClick={() => setFabOpen(true)}>
+          +
+        </button>
+        {fabOpen && (
+          <div style={inlineStyles.fabPopupOverlay} onClick={() => setFabOpen(false)}>
+            <div style={inlineStyles.fabPopup} onClick={e => e.stopPropagation()}>
+              <button style={inlineStyles.closeFabPopup} onClick={() => setFabOpen(false)}>&times;</button>
+              <h3 style={{marginBottom: '1rem'}}>Quick Actions</h3>
+              {/* <button style={inlineStyles.fabPopupButton} onClick={() => { setFabOpen(false); setProductSuggestionsOpen(true); }}>Product Suggestions</button> */}
+               <button
+                 style={inlineStyles.fabPopupButton}
+                 onClick={() => {
+                   window.open('https://www.google.com/shopping', '_blank');
+                   setFabOpen(false);
+                 }}
+               >
+                 Product Suggestions
+               </button>
+               
+            </div>
+          </div>
+        )}
+        {/* Product Suggestions Modal, can be modified as link to Google Shopping or direct recommendations */}
+        {/* <ProductSuggestions open={productSuggestionsOpen} onClose={() => setProductSuggestionsOpen(false)} /> */}
     </Layout>
   );
 }

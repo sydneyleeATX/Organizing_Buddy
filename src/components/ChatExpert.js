@@ -20,7 +20,7 @@ export default function ChatExpert({ open, onClose }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (open && messagesEndRef.current) {
+    if (open && messagesEndRef.current) {   // controls progression of chat window
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, open]);
@@ -28,8 +28,8 @@ export default function ChatExpert({ open, onClose }) {
   if (!open) return null;
 
   const handleSend = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+    e.preventDefault();  // prevent default form submission behavior (prevents page refresh)
+    if (!input.trim()) return;  // prevent empty messages
     const newMessages = [...messages, { sender: 'user', text: input }];
     setMessages(newMessages);
     setInput('');
@@ -38,11 +38,11 @@ export default function ChatExpert({ open, onClose }) {
     console.log('[ChatExpert] Sending messages to AI:', newMessages);
     try {
       const res = await fetch('/api/gemini', {
-        method: 'POST',
+        method: 'POST',  // HTTP method that tells server you are sending data
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages })
       });
-      const data = await res.json();
+      const data = await res.json();  // converts server response to JSON so it can be parsed into JavaScript
       console.log('[ChatExpert] AI API response:', data);
       if (!res.ok) throw new Error(data.message || 'AI error');
       setMessages([...newMessages, { sender: 'ai', text: data.reply }]);

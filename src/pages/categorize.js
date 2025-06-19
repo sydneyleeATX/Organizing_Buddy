@@ -16,6 +16,8 @@ import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import { updateProjectStep } from '../utils/projectUtils';
+import BackButton from '../components/BackButton';
+import ProjectNotesModal from '../components/ProjectNotesModal';
 
 
 export default function Categorize() {
@@ -55,10 +57,61 @@ export default function Categorize() {
     }
   };
 
+  // Empty FAB actions for this page
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [notes, setNotes] = useState('');
+  // Load notes for this project on open
+  const getCurrentProject = () => {
+    const projects = loadProjects();
+    return projects.find(p => p.zoneName === zoneName);
+  };
+  const fabActions = [
+    {
+      label: 'Project Notes',
+      onClick: () => {
+        const project = getCurrentProject();
+        setNotes(project && project.notes ? project.notes : '');
+        setNotesOpen(true);
+      }
+    }
+  ];
+
   // Main container with full viewport height and centered content
+  // Import project utils
+  const { loadProjects, saveProjects } = require('../utils/projectUtils');
+
+  // Back button handler: update most recent project step to 'clean' and go to clean page
+  const handleBack = () => {
+    const projects = loadProjects();
+    if (projects.length > 0) {
+      const lastProject = projects[projects.length - 1];
+      lastProject.currentStep = 'clean';
+      lastProject.status = 'in-progress';
+      lastProject.lastUpdated = new Date().toISOString();
+      saveProjects(projects);
+    }
+    router.push(`/clean?zoneName=${encodeURIComponent(zoneName)}`);
+  };
+
   return (
-    <Layout>
+    <Layout fabActions={fabActions}>
+      <BackButton onClick={handleBack} ariaLabel="Back to clean" />
       <div style={inlineStyles.container}>
+        <ProjectNotesModal
+          open={notesOpen}
+          initialNotes={notes}
+          onClose={() => setNotesOpen(false)}
+          onSave={newNotes => {
+            const projects = loadProjects();
+            const idx = projects.findIndex(p => p.zoneName === zoneName);
+            if (idx !== -1) {
+              projects[idx].notes = newNotes;
+              saveProjects(projects);
+            }
+            setNotes(newNotes);
+            setNotesOpen(false);
+          }}
+        />
       {/* Main heading for the categorization section */}
         <h1 style={inlineStyles.heading}>
           Categorize Items

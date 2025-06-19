@@ -10,12 +10,14 @@
  */
 
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import { updateProjectStep } from '../utils/projectUtils';
+import BackButton from '../components/BackButton';
+import ProjectNotesModal from '../components/ProjectNotesModal';
 
 
 
@@ -43,9 +45,60 @@ export default function Clean() {
     "A tidy space is a happy place, and you're making it happen!"
   ];
 
+  // Empty FAB actions for this page
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [notes, setNotes] = useState('');
+  // Load notes for this project on open
+  const getCurrentProject = () => {
+    const projects = loadProjects();
+    return projects.find(p => p.zoneName === zoneName);
+  };
+  const fabActions = [
+    {
+      label: 'Project Notes',
+      onClick: () => {
+        const project = getCurrentProject();
+        setNotes(project && project.notes ? project.notes : '');
+        setNotesOpen(true);
+      }
+    }
+  ];
+
+  // Import project utils
+  const { loadProjects, saveProjects } = require('../utils/projectUtils');
+
+  // Back button handler: update most recent project step to 'declutter' and go to declutter page
+  const handleBack = () => {
+    const projects = loadProjects();
+    if (projects.length > 0) {
+      const lastProject = projects[projects.length - 1];
+      lastProject.currentStep = 'declutter';
+      lastProject.status = 'in-progress';
+      lastProject.lastUpdated = new Date().toISOString();
+      saveProjects(projects);
+    }
+    router.push(`/declutter?zoneName=${encodeURIComponent(zoneName)}`);
+  };
+
   return (
-    <Layout>
+    <Layout fabActions={fabActions}>
+      <BackButton onClick={handleBack} ariaLabel="Back to declutter" />
       <div style={inlineStyles.container}>
+        <ProjectNotesModal
+          open={notesOpen}
+          initialNotes={notes}
+          onClose={() => setNotesOpen(false)}
+          onSave={newNotes => {
+            const projects = loadProjects();
+            const idx = projects.findIndex(p => p.zoneName === zoneName);
+            if (idx !== -1) {
+              projects[idx].notes = newNotes;
+              saveProjects(projects);
+            }
+            setNotes(newNotes);
+            setNotesOpen(false);
+          }}
+        />
         <h1 style={inlineStyles.heading}>
           Clean Up
         </h1>

@@ -5,11 +5,17 @@ import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import { updateProjectStep } from '../utils/projectUtils';
+import BackButton from '../components/BackButton';
+import ProjectNotesModal from '../components/ProjectNotesModal';
+
 
 // Menu component with navigation buttons
 export default function Empty() {
   const router = useRouter();  // Initialize the router instance
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
+
+  // Empty FAB actions for this page
+  const fabActions = [];
 
 // Optional: simple inline styling
 const inlineStyles = {
@@ -70,8 +76,22 @@ const inlineStyles = {
     router.push(`/declutter?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
+  // Import project utils
+  const { loadProjects, saveProjects } = require('../utils/projectUtils');
+
+  // Back button handler: delete most recent project and go to zone page
+  const handleBack = () => {
+    const projects = loadProjects();
+    if (projects.length > 0) {
+      projects.pop(); // Remove the most recent project
+      saveProjects(projects);
+    }
+    router.push('/zone');
+  };
+
   return (
-    <Layout>
+    <Layout fabActions={fabActions}>
+      <BackButton onClick={handleBack} ariaLabel="Back to zone" />
       <div style={inlineStyles.container}>
         <h1 style={inlineStyles.heading}>
           Empty {zoneName}

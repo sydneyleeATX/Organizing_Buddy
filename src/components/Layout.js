@@ -5,11 +5,13 @@ import React from 'react';
 import { useRouter } from 'next/router'; // or 'next/navigation' if using App Router
 import styles from './Layout.module.css';
 
-const Layout = ({ children }) => {
+import FabButton from './FabButton';
+
+const Layout = ({ children, fabActions = [] }) => {
   const router = useRouter();
 
   const handleMenuClick = () => {
-    router.push('/menu'); // Navigate to /menu
+    router.push('/menu');
   };
 
   return (
@@ -18,6 +20,7 @@ const Layout = ({ children }) => {
         Menu
       </button>
       {children}
+      <FabButton actions={fabActions} />
     </div>
   );
 };

@@ -19,6 +19,9 @@ import styles from '../components/Layout.module.css';
 import ImageUploader from '../components/ImageUpload';
 import { updateProjectStep } from '../utils/projectUtils';
 import ProductSuggestions from '../components/ProductSuggestions';
+import fabStyles from '../components/FabButton.module.css';
+import BackButton from '../components/BackButton';
+import ProjectNotesModal from '../components/ProjectNotesModal';
 
 
 export default function Return() {
@@ -30,20 +33,28 @@ export default function Return() {
   const [confirmedPhotoUploaded, setConfirmedPhotoUploaded] = useState(false);
   const [fabOpen, setFabOpen] = useState(false);
   const [productSuggestionsOpen, setProductSuggestionsOpen] = useState(false);
-  
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [notes, setNotes] = useState('');
+  // Load notes for this project on open
+  const getCurrentProject = () => {
+    const projects = loadProjects();
+    return projects.find(p => p.zoneName === zoneName);
+  };
+  // Import project utils
+  const { loadProjects, saveProjects } = require('../utils/projectUtils');
 
   const handleConfirmItemsReturned = () => {
     setItemsReturned('confirmed');
     setConfirmedItemsReturned(true);
   };
 
-  const { loadProjects, saveProjects } = require('../utils/projectUtils');
+
 
   const handlePhotoConfirmed = (photoDataUrl) => {
     // Save the after photo (endPhoto) to the correct project in localStorage
     const projects = loadProjects();
     const updatedProjects = projects.map(project =>
-      project.zoneName === zoneName
+      project.zoneName === zoneName  // updates the endPhoto for the correct project (save to localStorage)
         ? { ...project, endPhoto: photoDataUrl }
         : project
     );
@@ -57,6 +68,7 @@ export default function Return() {
     router.push(`/complete?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
+
   // Messages for the encouragement popup
   const returnMessages = [
     "Every item now has a purpose and a place – your home is truly serving you.", 
@@ -69,6 +81,24 @@ export default function Return() {
     "You've transformed your home from a storage unit into a true sanctuary.", 
     "This is the moment of effortless living; enjoy the fruits of your organizing efforts!", 
     "Congratulations! You've given your home and your belongings the clarity they deserve."
+  ];
+
+  // FAB actions for this page
+  // Product Suggestions Modal, can be modified as link to Google Shopping or direct recommendations 
+  // <ProductSuggestions open={productSuggestionsOpen} onClose={() => setProductSuggestionsOpen(false)} /> 
+  const fabActions = [
+    {
+      label: 'Project Notes',
+      onClick: () => {
+        const project = getCurrentProject();
+        setNotes(project && project.notes ? project.notes : '');
+        setNotesOpen(true);
+      }
+    },
+    {
+      label: 'Product Suggestions',
+      onClick: () => window.open('https://www.google.com/shopping', '_blank')
+    }
   ];
 
   // Optional: simple inline styling
@@ -114,62 +144,39 @@ export default function Return() {
       color: '#333',                       // Text color
       marginBottom: '1rem',                // Space below paragraph
     },
-    fabButton: {
-      position: 'fixed',
-      bottom: '2rem',
-      right: '2rem',
-      zIndex: 1000,
-      width: '56px',
-      height: '56px',
-      fontSize: '1.5rem',
-      borderRadius: '50%',
-      border: 'none',
-      cursor: 'pointer',
-      backgroundColor: '#007bff',
-      color: 'white',
-      transition: 'background-color 0.2s',
-    },
-    fabPopupOverlay: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      zIndex: 999,
-    },
-    fabPopup: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      padding: '2rem',
-      backgroundColor: '#fff',
-      borderRadius: '8px',
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-      zIndex: 1000,
-    },
-    closeFabPopup: {
-      position: 'absolute',
-      top: '1rem',
-      right: '1rem',
-      cursor: 'pointer',
-    },
-    fabPopupButton: {
-      padding: '1rem 2rem',
-      fontSize: '1rem',
-      borderRadius: '8px',
-      border: 'none',
-      cursor: 'pointer',
-      backgroundColor: '#007bff',
-      color: 'white',
-      width: '250px',
-      transition: 'background-color 0.2s',
-    },
+  };
+
+  // Back button handler: update most recent project step to 'categorize' and go to categorize page
+  const handleBack = () => {
+    const projects = loadProjects();
+    if (projects.length > 0) {
+      const lastProject = projects[projects.length - 1];
+      lastProject.currentStep = 'categorize';
+      lastProject.status = 'in-progress';
+      lastProject.lastUpdated = new Date().toISOString();
+      saveProjects(projects);
+    }
+    router.push(`/categorize?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
   return (
-    <Layout>
+    <Layout fabActions={fabActions}>
+      <BackButton onClick={handleBack} ariaLabel="Back to categorize" />
+      <ProjectNotesModal
+        open={notesOpen}
+        initialNotes={notes}
+        onClose={() => setNotesOpen(false)}
+        onSave={newNotes => {
+          const projects = loadProjects();
+          const idx = projects.findIndex(p => p.zoneName === zoneName);
+          if (idx !== -1) {
+            projects[idx].notes = newNotes;
+            saveProjects(projects);
+          }
+          setNotes(newNotes);
+          setNotesOpen(false);
+        }}
+      />
       <div style={inlineStyles.container}>
         <h1 style={inlineStyles.heading}>
           Return Items
@@ -203,31 +210,7 @@ export default function Return() {
             
       </div>
 
-      {/* Floating button in bottom right corner */}
-      <button style={inlineStyles.fabButton} onClick={() => setFabOpen(true)}>
-          +
-        </button>
-        {fabOpen && (
-          <div style={inlineStyles.fabPopupOverlay} onClick={() => setFabOpen(false)}>
-            <div style={inlineStyles.fabPopup} onClick={e => e.stopPropagation()}>
-              <button style={inlineStyles.closeFabPopup} onClick={() => setFabOpen(false)}>&times;</button>
-              <h3 style={{marginBottom: '1rem'}}>Quick Actions</h3>
-              {/* <button style={inlineStyles.fabPopupButton} onClick={() => { setFabOpen(false); setProductSuggestionsOpen(true); }}>Product Suggestions</button> */}
-               <button
-                 style={inlineStyles.fabPopupButton}
-                 onClick={() => {
-                   window.open('https://www.google.com/shopping', '_blank');
-                   setFabOpen(false);
-                 }}
-               >
-                 Product Suggestions
-               </button>
-               
-            </div>
-          </div>
-        )}
-        {/* Product Suggestions Modal, can be modified as link to Google Shopping or direct recommendations */}
-        {/* <ProductSuggestions open={productSuggestionsOpen} onClose={() => setProductSuggestionsOpen(false)} /> */}
+
     </Layout>
   );
 }

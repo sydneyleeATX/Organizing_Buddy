@@ -113,7 +113,9 @@ export default function Zone() {
       currentStep: 'empty',
       status: 'in-progress',
       lastUpdated: new Date().toISOString(),
-      startPhoto: zonePhoto
+      startPhoto: zonePhoto,
+      endPhoto: null,
+      notes: ''
     };
     console.log('[createNewProject] New project:', newProject);
 

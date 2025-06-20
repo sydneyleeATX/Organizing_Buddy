@@ -90,9 +90,13 @@ export default function Clean() {
           onClose={() => setNotesOpen(false)}
           onSave={newNotes => {
             const projects = loadProjects();
-            const idx = projects.findIndex(p => p.zoneName === zoneName);
+            // Only update the most recent in-progress project with this zoneName
+            const idx = [...projects].reverse().findIndex(
+              p => p.zoneName === zoneName && p.status !== 'completed'
+            );
             if (idx !== -1) {
-              projects[idx].notes = newNotes;
+              const realIdx = projects.length - 1 - idx;
+              projects[realIdx].notes = newNotes;
               saveProjects(projects);
             }
             setNotes(newNotes);

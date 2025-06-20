@@ -51,14 +51,16 @@ export default function Return() {
 
 
   const handlePhotoConfirmed = (photoDataUrl) => {
-    // Save the after photo (endPhoto) to the correct project in localStorage
     const projects = loadProjects();
-    const updatedProjects = projects.map(project =>
-      project.zoneName === zoneName  // updates the endPhoto for the correct project (save to localStorage)
-        ? { ...project, endPhoto: photoDataUrl }
-        : project
+    // Find the last in-progress project with this zoneName
+    const idx = [...projects].reverse().findIndex(
+      project => project.zoneName === zoneName && project.status !== 'completed'
     );
-    saveProjects(updatedProjects);
+    if (idx !== -1) {
+      const realIdx = projects.length - 1 - idx;
+      projects[realIdx].endPhoto = photoDataUrl;
+      saveProjects(projects);
+    }
     setConfirmedPhotoUploaded(true);
     handleNextStep();
   };
@@ -149,14 +151,18 @@ export default function Return() {
   // Back button handler: update most recent project step to 'categorize' and go to categorize page
   const handleBack = () => {
     const projects = loadProjects();
-    if (projects.length > 0) {
-      const lastProject = projects[projects.length - 1];
-      lastProject.currentStep = 'categorize';
-      lastProject.status = 'in-progress';
-      lastProject.lastUpdated = new Date().toISOString();
+    // Only update the most recent in-progress project with this zoneName
+    const idx = [...projects].reverse().findIndex(
+      project => project.zoneName === zoneName && project.status !== 'completed'
+    );
+    if (idx !== -1) {
+      const realIdx = projects.length - 1 - idx;
+      projects[realIdx].currentStep = 'declutter';
+      projects[realIdx].status = 'in-progress';
+      projects[realIdx].lastUpdated = new Date().toISOString();
       saveProjects(projects);
     }
-    router.push(`/categorize?zoneName=${encodeURIComponent(zoneName)}`);
+    router.push(`/declutter?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
   return (

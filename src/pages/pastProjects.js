@@ -7,9 +7,13 @@ import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import { loadProjects } from '../utils/projectUtils';
+import ProjectNotesModal from '../components/ProjectNotesModal';
 
 export default function PastProjects() {
   const [completedProjects, setCompletedProjects] = useState([]);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [notes, setNotes] = useState('');
+  const [notesProjectId, setNotesProjectId] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,6 +37,24 @@ export default function PastProjects() {
   return (
     <Layout>
       <div style={inlineStyles.container}>
+        <ProjectNotesModal
+          open={notesOpen}
+          initialNotes={notes}
+          onClose={() => setNotesOpen(false)}
+          onSave={newNotes => {
+            // Update notes for the correct project in localStorage and UI
+            const stored = localStorage.getItem('projects');
+            const projects = stored ? JSON.parse(stored) : [];
+            const idx = projects.findIndex(p => p.id === notesProjectId);
+            if (idx !== -1) {
+              projects[idx].notes = newNotes;
+              localStorage.setItem('projects', JSON.stringify(projects));
+              setCompletedProjects(prev => prev.map(p => p.id === notesProjectId ? { ...p, notes: newNotes } : p));
+            }
+            setNotes(newNotes);
+            setNotesOpen(false);
+          }}
+        />
         <h1 style={inlineStyles.heading}>Completed Projects</h1>
         {completedProjects.length === 0 ? (
           <p style={inlineStyles.noProjects}>No completed projects found.</p>
@@ -78,8 +100,12 @@ export default function PastProjects() {
                     Delete
                   </button>
                   <button
-                    style={inlineStyles.resumeButton}
-                    disabled
+                    style={inlineStyles.showNotesButton}
+                    onClick={() => {
+                      setNotesProjectId(project.id);
+                      setNotes(project.notes || '');
+                      setNotesOpen(true);
+                    }}
                   >
                     Show Notes
                   </button>
@@ -168,5 +194,15 @@ const inlineStyles = {
     cursor: 'pointer',
     fontSize: '0.875rem',
     width: 'auto'
+  }, 
+  showNotesButton: {
+    padding: '0.5rem 1rem',
+    borderRadius: '4px',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '0.875rem',
+    width: 'auto',
+    backgroundColor: '#007bff',
+    color: 'white'
   }
 };

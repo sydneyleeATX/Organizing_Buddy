@@ -20,20 +20,21 @@ export const updateProjectStep = (zoneName, newStep) => {  // updates the projec
     }
   };
 
-  const updatedProjects = projects.map(project => {
-    if (project.zoneName === zoneName) {
-      console.log('[updateProjectStep] Updating project:', project);
-      return {
-        ...project,
-        currentStep: newStep,
-        status: getStatus(newStep),
-        lastUpdated: new Date().toISOString()
-      };
-    }
-    return project;
-  });
-  saveProjects(updatedProjects);  // save updated array to localStorage
-  console.log('[updateProjectStep] Updated projects array:', updatedProjects);
+  // Only update the most recent in-progress project with this zoneName
+  const idx = [...projects].reverse().findIndex(
+    project => project.zoneName === zoneName && project.status !== 'completed'
+  );
+  if (idx !== -1) {
+    const realIdx = projects.length - 1 - idx;
+    projects[realIdx] = {
+      ...projects[realIdx],
+      currentStep: newStep,
+      status: getStatus(newStep),
+      lastUpdated: new Date().toISOString()
+    };
+    saveProjects(projects);  // save updated array to localStorage
+    console.log('[updateProjectStep] Updated projects array:', projects);
+  }
 };
 
 export const saveProjects = (updatedProjects) => {  // saves projects to localStorage

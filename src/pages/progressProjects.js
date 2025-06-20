@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
+import ProjectNotesModal from '../components/ProjectNotesModal';
 import { loadProjects, saveProjects as saveProjectsToStorage, updateProjectStep, deleteProject } from '../utils/projectUtils';
 
 /**
@@ -23,6 +24,12 @@ import { loadProjects, saveProjects as saveProjectsToStorage, updateProjectStep,
  */
 export default function ProgressProjects() {
   const [projects, setProjects] = useState([]);
+  // controls whether notes popup is visible
+  const [notesOpen, setNotesOpen] = useState(false);
+  // stores the notes for the project being edited
+  const [notes, setNotes] = useState('');
+  // stores the ID of the project being edited
+  const [notesProjectId, setNotesProjectId] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -79,6 +86,24 @@ export default function ProgressProjects() {
 
   return (
     <Layout>
+      <ProjectNotesModal
+        open={notesOpen}
+        initialNotes={notes}
+        onClose={() => setNotesOpen(false)}
+        onSave={newNotes => {
+          // Update notes for the correct project in localStorage and UI
+          const stored = localStorage.getItem('projects');
+          const projectsArr = stored ? JSON.parse(stored) : [];
+          const idx = projectsArr.findIndex(p => p.id === notesProjectId);
+          if (idx !== -1) {
+            projectsArr[idx].notes = newNotes;
+            localStorage.setItem('projects', JSON.stringify(projectsArr));
+            setProjects(prev => prev.map(p => p.id === notesProjectId ? { ...p, notes: newNotes } : p));
+          }
+          setNotes(newNotes);
+          setNotesOpen(false);
+        }}
+      />
       <div style={inlineStyles.container}>
         <h1 style={inlineStyles.heading}>Ongoing Projects</h1>
         
@@ -102,6 +127,16 @@ export default function ProgressProjects() {
       style={{ maxWidth: '100px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
     />
     <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>Before photo</div>
+    <button
+      style={{ ...inlineStyles.showNotesButton, marginTop: '0.5rem', width: 'auto' }}
+      onClick={() => {
+        setNotesProjectId(project.id);
+        setNotes(project.notes || '');
+        setNotesOpen(true);
+      }}
+    >
+      Show Notes
+    </button>
     {project.endPhoto && (
       <>
         <img
@@ -215,5 +250,15 @@ const inlineStyles = {
     cursor: 'pointer',
     fontSize: '0.875rem',
     width: 'auto'
+  },
+  showNotesButton: {
+    padding: '0.5rem 1rem',
+    borderRadius: '4px',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '0.875rem',
+    width: 'auto',
+    backgroundColor: '#007bff',
+    color: 'white'
   }
 };

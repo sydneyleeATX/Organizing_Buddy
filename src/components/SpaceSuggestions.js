@@ -107,9 +107,9 @@ const SpaceSuggestions = ({ open, onClose, onSelect }) => {
         <button
           style={modalStyles.closeBtn}
           onClick={onClose}
-          aria-label="Close"  // assistive tech reads that this is a close button
+          aria-label="Close"
         >
-          &times;  // visual close button
+          &times; {/* visual close button */}
         </button>
         <h2 style={modalStyles.heading}>Space Suggestions</h2>
         <ul style={modalStyles.list}>
@@ -122,10 +122,11 @@ const SpaceSuggestions = ({ open, onClose, onSelect }) => {
                 if (onSelect) onSelect(space);
                 if (onClose) onClose();
               }}
-              tabIndex={0}  // makes the list keyboard navigable via tab
+              tabIndex={0}
               role="button"
-              aria-label={`Select ${space}`}  // assistive tech reads this text when focused
-              onKeyDown={e => {  // when enter or space is pressed, call the onSelect and onClose functions
+              aria-label={`Select ${space}`}
+              // when enter or space is pressed, call the onSelect and onClose functions
+              onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   if (onSelect) onSelect(space);
                   if (onClose) onClose();

@@ -17,6 +17,7 @@ import { useRouter } from 'next/router';
 import ImageUploader from '../components/ImageUpload';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
+import SpaceSuggestions from '../components/SpaceSuggestions';
 
 // Inline styles
 const inlineStyles = {
@@ -58,6 +59,16 @@ const inlineStyles = {
     color: 'white',
     marginTop: '1rem',
   },
+  skipButton: {
+    padding: '1rem 2rem',
+    fontSize: '1rem',
+    borderRadius: '8px',
+    border: 'none',
+    cursor: 'pointer',
+    backgroundColor: '#888',
+    color: 'white',
+    marginTop: '1rem',
+  },
 };
 
 /**
@@ -72,11 +83,28 @@ export default function Zone() {
   const router = useRouter();
 
   // State variables to track user input and confirmation status
-  const [zoneName, setZoneName] = useState('');  // holds the user's input for their zone name
-  const [confirmedZoneName, setConfirmedZoneName] = useState(false);  // tracks zone name confirmation
-  const [zonePhoto, setZonePhoto] = useState(null);  // holds the selected photo file
-  const [confirmedZonePhoto, setConfirmedZonePhoto] = useState(false);  // tracks photo confirmation
-  
+  // User's input for their zone name
+  const [zoneName, setZoneName] = useState('');
+  // Tracks whether the zone name has been confirmed
+  const [confirmedZoneName, setConfirmedZoneName] = useState(false);
+  // Holds the selected photo file for the zone
+  const [zonePhoto, setZonePhoto] = useState(null);
+  // Tracks whether the zone photo has been confirmed
+  const [confirmedZonePhoto, setConfirmedZonePhoto] = useState(false);
+  // Controls the visibility of the SpaceSuggestions popup/modal
+  const [spaceSuggestionsOpen, setSpaceSuggestionsOpen] = useState(false);
+  // Tracks whether the user has skipped the photo step
+  const [skipPhoto, setSkipPhoto] = useState(false);
+
+
+  // Floating Action Button (FAB) actions for this page
+  // Each action is shown in the FAB menu. The Space Suggestions action opens the modal.
+  const fabActions = [
+    {
+      label: 'Space Suggestions',
+      onClick: () => setSpaceSuggestionsOpen(true) // Open the SpaceSuggestions modal
+    }
+  ];
 
   /**
    * Handle user confirmation of their focus area
@@ -130,12 +158,21 @@ export default function Zone() {
   };
 
   return (
-    <Layout>
+    <Layout fabActions={fabActions}> {/* Attach FAB actions to the Layout */}
+      {/* SpaceSuggestions popup/modal. Appears when spaceSuggestionsOpen is true. */}
+      {/* SpaceSuggestions modal: clicking a space fills the zoneName input, but does NOT submit */}
+      <SpaceSuggestions
+        open={spaceSuggestionsOpen}
+        onClose={() => setSpaceSuggestionsOpen(false)}
+        onSelect={setZoneName}
+      />
       <div style={inlineStyles.container}>
+
         {/* Main heading asking user to define their focus area */}
         <h1 style={inlineStyles.h1}>Define your Zone</h1>
 
-        {!confirmedZoneName && ( // If zone name is NOT confirmed, show input field
+        {/* If zone name is NOT confirmed, show input field for zone name */}
+        {!confirmedZoneName && (
           <>
             <p style={inlineStyles.p}>
               Let's define your focus area. What space are you organizing?
@@ -154,7 +191,9 @@ export default function Zone() {
           </>
         )}
 
-        {confirmedZoneName && !confirmedZonePhoto && ( // If zone name IS confirmed, but photo is not uploaded yet, show image uploader
+
+        {/* If zone name IS confirmed, but photo is not uploaded yet, show image uploader */}
+        {confirmedZoneName && !confirmedZonePhoto && !skipPhoto && (
           <>
             <p style={inlineStyles.p}>
               Great, we are organizing your {zoneName}!
@@ -162,21 +201,35 @@ export default function Zone() {
             <p style={inlineStyles.p}>
               Upload a "before" photo of your {zoneName}. When you finish this project the difference will be remarkable! 
             </p>
-          {/* Render the ImageUploader component here */}
-            <ImageUploader onImageConfirmed={handlePhotoConfirmed} />
+            {/* Render the ImageUploader component here */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+              <ImageUploader onImageConfirmed={handlePhotoConfirmed} />
+              <button
+                type="button"
+                style={inlineStyles.skipButton}
+                onClick={() => setSkipPhoto(true)}
+                aria-label="Skip photo upload"
+              >
+                Skip Photo
+              </button>
+            </div>
           </>
         )}
 
-        {confirmedZoneName && confirmedZonePhoto && (  // If zone name is confirmed and photo is uploaded, show the "Let's Go!" button
+
+        {/* If zone name is confirmed and photo is uploaded, show the "Let's Go!" button */}
+        {confirmedZoneName && (confirmedZonePhoto || skipPhoto) && (
           <>
             <p style={inlineStyles.p}>
               Great, we are organizing your {zoneName}!
-            </p>                                              {/* ? is start of URL, $ separates parameter name from value*/}
+            </p>
+            {/* Button to proceed to the next step (empty.js) */}
             <button style={inlineStyles.button} onClick={() => handleZoneConfirm(zoneName)}>
               Let's Go!
             </button>
           </>
         )}
+
       </div>
     </Layout>
   );

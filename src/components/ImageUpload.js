@@ -56,9 +56,7 @@ export default function ImageUploader({ onImageConfirmed }) {
           // Compress to JPEG at 0.8 quality
           const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
           setImagePreview(dataUrl);
-          if (onImageConfirmed) {
-            onImageConfirmed(dataUrl);  // pass the data URL to the parent component
-          }
+          // Do not notify parent yet; wait for Upload Photo button click
         };
         img.src = reader.result;
       };
@@ -75,12 +73,12 @@ export default function ImageUploader({ onImageConfirmed }) {
    * @todo Implement actual file upload to server
    */
   const handleUpload = () => {
-    if (imageFile) {
+    if (imageFile && imagePreview) {
       // Store the file and confirm the upload
       console.log('File stored:', imageFile.name);
       setIsUploadConfirmed(true);
       if (onImageConfirmed) {
-        onImageConfirmed(imageFile);
+        onImageConfirmed(imagePreview); // Pass the preview dataUrl to parent
       }
     } else {
       alert('Please select an image first.');

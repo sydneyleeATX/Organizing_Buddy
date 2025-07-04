@@ -35,6 +35,15 @@ export default function Return() {
   const [productSuggestionsOpen, setProductSuggestionsOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
   const [notes, setNotes] = useState('');
+  const [skipPhoto, setSkipPhoto] = useState(false);
+
+  // When skipPhoto is set to true, proceed to the next step automatically
+  React.useEffect(() => {
+    if (skipPhoto) {
+      handleNextStep();
+    }
+  }, [skipPhoto]);
+
   // Load notes for this project on open
   const getCurrentProject = () => {
     const projects = loadProjects();
@@ -146,6 +155,16 @@ export default function Return() {
       color: '#333',                       // Text color
       marginBottom: '1rem',                // Space below paragraph
     },
+    skipButton: {
+      padding: '1rem 2rem',
+      fontSize: '1rem',
+      borderRadius: '8px',
+      border: 'none',
+      cursor: 'pointer',
+      backgroundColor: '#888',
+      color: 'white',
+      marginTop: '1rem',
+    },
   };
 
   // Back button handler: update most recent project step to 'categorize' and go to categorize page
@@ -157,12 +176,12 @@ export default function Return() {
     );
     if (idx !== -1) {
       const realIdx = projects.length - 1 - idx;
-      projects[realIdx].currentStep = 'declutter';
+      projects[realIdx].currentStep = 'categorize';
       projects[realIdx].status = 'in-progress';
       projects[realIdx].lastUpdated = new Date().toISOString();
       saveProjects(projects);
     }
-    router.push(`/declutter?zoneName=${encodeURIComponent(zoneName)}`);
+    router.push(`/categorize?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
   return (
@@ -211,9 +230,15 @@ export default function Return() {
               Upload a photo of your organized space!
             </p>
             <ImageUploader onImageConfirmed={handlePhotoConfirmed} />
+            <button style={inlineStyles.skipButton} onClick={() => setSkipPhoto(true)}>
+              Skip Photo
+            </button>
           </>
         )}
-            
+
+        {/* When skipPhoto is set to true, automatically call handleNextStep to proceed. 
+        If you want to perform logic that causes side effects (such as navigation, updating state, fetching data => use useEffect) */}
+        
       </div>
 
 

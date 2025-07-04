@@ -78,7 +78,7 @@ const styles = {
     transform: 'translate(-50%, -50%)',
 
     // Visual styling
-    backgroundColor: '#28a745',  // Green background
+    backgroundColor: '#b2e0eb',  // light blue background
     color: 'white',              // White text
     padding: '1rem 2rem',
     borderRadius: '10px',

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">OrganizeAI</string>
+    <string name="title_activity_main">OrganizeAI</string>
+    <string name="package_name">com.leesydney.organizingbuddy</string>
+    <string name="custom_url_scheme">com.leesydney.organizingbuddy</string>
+</resources>

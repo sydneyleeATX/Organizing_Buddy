@@ -10,6 +10,10 @@
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s;
+  z-index: 9999;
+  position: absolute;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .menu-button:hover {

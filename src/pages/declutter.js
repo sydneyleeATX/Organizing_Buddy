@@ -22,6 +22,7 @@ import { updateProjectStep, getCurrentProject } from '../utils/projectUtils';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 const { loadProjects, saveProjects } = require('../utils/projectUtils');
+import KeepQuiz from '../components/KeepQuiz';
 
 
 
@@ -32,6 +33,7 @@ export default function Declutter() {
   const [tipsOpen, setTipsOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
   const [notes, setNotes] = useState('');
+  const [keepQuizOpen, setKeepQuizOpen] = useState(false);
 
 
 
@@ -54,10 +56,8 @@ export default function Declutter() {
       onClick: () => setTipsOpen(true)
     },
     {
-      label: 'Keep or Let Go?',
-      onClick: () => {
-        
-      }
+      label: 'Should I keep this?',
+      onClick: () => {setKeepQuizOpen(true)}
     }
   ];
 
@@ -104,12 +104,6 @@ export default function Declutter() {
       <Layout fabActions={fabActions}>
         <BackButton onClick={handleBack} ariaLabel="Back to empty" />
         <div style={inlineStyles.container}>
-        <ProjectNotesModal
-          open={notesOpen}
-          initialNotes={notes}
-          zoneName={zoneName}
-          onClose={() => setNotesOpen(false)}
-        />
         <h1 style={inlineStyles.heading}>
           Sort & Declutter
         </h1>
@@ -138,6 +132,13 @@ export default function Declutter() {
         </button>
         <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
         <DeclutterTips open={tipsOpen} onClose={() => setTipsOpen(false)} />
+        <KeepQuiz open={keepQuizOpen} onClose={() => setKeepQuizOpen(false)} />
+        <ProjectNotesModal
+          open={notesOpen}
+          initialNotes={notes}
+          zoneName={zoneName}
+          onClose={() => setNotesOpen(false)}
+        />
       </div>
     </Layout>
   );

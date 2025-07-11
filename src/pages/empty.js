@@ -1,21 +1,39 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router'; // Import Next.js' router for navigation
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject } from '../utils/projectUtils';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
+import ChatExpert from '../components/ChatExpert';
 
 
 // Menu component with navigation buttons
 export default function Empty() {
   const router = useRouter();  // Initialize the router instance
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [notes, setNotes] = useState('');
+  
 
   // Empty FAB actions for this page
-  const fabActions = [];
+  const fabActions = [
+    {
+      label: 'Project Notes',
+      onClick: () => {
+        const project = getCurrentProject();
+        setNotes(project && project.notes ? project.notes : '');
+        setNotesOpen(true);
+      }
+    },
+    {
+      label: 'Ask an Expert',
+      onClick: () => setChatOpen(true)
+    }
+  ];
 
 // Optional: simple inline styling
 const inlineStyles = {
@@ -37,18 +55,7 @@ const inlineStyles = {
     fontSize: '1.1rem',
     color: '#333',
     marginBottom: '2rem',
-  },
-  button: {
-    padding: '1rem 2rem',
-    fontSize: '1rem',
-    borderRadius: '8px',
-    border: 'none',
-    cursor: 'pointer',
-    backgroundColor: '#007bff',
-    color: 'white',
-    width: '250px',
-    transition: 'background-color 0.2s',
-  },
+  }
 };
 
   const emptyMessages = [
@@ -104,9 +111,16 @@ const inlineStyles = {
         <EncouragementPopup messages={emptyMessages} />
 
         {/* Button to start a new project by navigating to /declutter */}
-        <button style={inlineStyles.button} onClick={handleNextStep}>
+        <button className={styles.button} onClick={handleNextStep}>
           I'm ready to sort
         </button>
+      <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
+      <ProjectNotesModal
+          open={notesOpen}
+          initialNotes={notes}
+          zoneName={zoneName}
+          onClose={() => setNotesOpen(false)}
+      />
       </div>
     </Layout>
   );

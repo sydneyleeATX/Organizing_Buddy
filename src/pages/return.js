@@ -17,11 +17,13 @@ import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import ImageUploader from '../components/ImageUpload';
-import { updateProjectStep } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, loadProjects, saveProjects } from '../utils/projectUtils';
 import ProductSuggestions from '../components/ProductSuggestions';
 import fabStyles from '../components/FabButton.module.css';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
+import ChatExpert from '../components/ChatExpert';
+import StorageTips from '../components/StorageTips';
 
 
 export default function Return() {
@@ -36,6 +38,8 @@ export default function Return() {
   const [notesOpen, setNotesOpen] = useState(false);
   const [notes, setNotes] = useState('');
   const [skipPhoto, setSkipPhoto] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [storageTipsOpen, setStorageTipsOpen] = useState(false);
 
   // When skipPhoto is set to true, proceed to the next step automatically
   React.useEffect(() => {
@@ -43,19 +47,6 @@ export default function Return() {
       handleNextStep();
     }
   }, [skipPhoto]);
-
-  // Load notes for this project on open
-  const getCurrentProject = () => {
-    const projects = loadProjects();
-    return projects.find(p => p.zoneName === zoneName);
-  };
-  // Import project utils
-  const { loadProjects, saveProjects } = require('../utils/projectUtils');
-
-  const handleConfirmItemsReturned = () => {
-    setItemsReturned('confirmed');
-    setConfirmedItemsReturned(true);
-  };
 
 
 
@@ -78,6 +69,12 @@ export default function Return() {
     updateProjectStep(zoneName, 'complete');
     router.push(`/complete?zoneName=${encodeURIComponent(zoneName)}`);
   };
+
+  const handleConfirmItemsReturned = () => {
+    setConfirmedItemsReturned(true);
+  };
+
+
 
 
   // Messages for the encouragement popup
@@ -109,6 +106,14 @@ export default function Return() {
     {
       label: 'Product Suggestions',
       onClick: () => window.open('https://www.google.com/shopping', '_blank')
+    },
+    {
+      label: 'Ask an Expert',
+      onClick: () => setChatOpen(true)
+    },
+    {
+      label: 'Storage Tips',
+      onClick: () => setStorageTipsOpen(true)
     }
   ];
 
@@ -132,17 +137,6 @@ export default function Return() {
       fontSize: '1.1rem',                  // Standard font size
       color: '#333',                       // Text color
       marginBottom: '2rem',                // Space below description
-    },
-    button: {
-      padding: '1rem 2rem',                // Padding inside button
-      fontSize: '1rem',                    // Standard font size
-      borderRadius: '8px',                 // Rounded corners
-      border: 'none',                      // No border
-      cursor: 'pointer',                   // Pointer cursor on hover
-      backgroundColor: '#007bff',          // Bootstrap blue
-      color: 'white',                      // White text
-      width: '250px',                      // Fixed width
-      transition: 'background-color 0.2s', // Smooth color transition
     },
     ul: {
       listStyleType: 'circle',               // Hollow bullet points
@@ -188,20 +182,13 @@ export default function Return() {
     <Layout fabActions={fabActions}>
       <BackButton onClick={handleBack} ariaLabel="Back to categorize" />
       <ProjectNotesModal
-        open={notesOpen}
-        initialNotes={notes}
-        onClose={() => setNotesOpen(false)}
-        onSave={newNotes => {
-          const projects = loadProjects();
-          const idx = projects.findIndex(p => p.zoneName === zoneName);
-          if (idx !== -1) {
-            projects[idx].notes = newNotes;
-            saveProjects(projects);
-          }
-          setNotes(newNotes);
-          setNotesOpen(false);
-        }}
+              open={notesOpen}
+              initialNotes={notes}
+              zoneName={zoneName}
+              onClose={() => setNotesOpen(false)}
       />
+      <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
+      <StorageTips open={storageTipsOpen} onClose={() => setStorageTipsOpen(false)} />
       <div style={inlineStyles.container}>
         <h1 style={inlineStyles.heading}>
           Return Items
@@ -219,7 +206,7 @@ export default function Return() {
               <li>Easy access: What do you use most often?</li>
               <li>Vertical space: Can you stack items or use risers?</li>
             </ul>
-            <button style={inlineStyles.button} onClick={handleConfirmItemsReturned}>
+            <button className={styles.button} onClick={handleConfirmItemsReturned}>
               All items are returned!
             </button>
           </>

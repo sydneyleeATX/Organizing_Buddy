@@ -18,7 +18,7 @@ import ChatExpert from '../components/ChatExpert';
 import DeclutterTips from '../components/DeclutterTips';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject } from '../utils/projectUtils';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 const { loadProjects, saveProjects } = require('../utils/projectUtils');
@@ -33,11 +33,7 @@ export default function Declutter() {
   const [notesOpen, setNotesOpen] = useState(false);
   const [notes, setNotes] = useState('');
 
-  // Load notes for this project on open
-  const getCurrentProject = () => {
-    const projects = loadProjects();
-    return projects.find(p => p.zoneName === zoneName);
-  };
+
 
   // FAB actions for this page
   const fabActions = [
@@ -54,8 +50,14 @@ export default function Declutter() {
       onClick: () => setChatOpen(true)
     },
     {
-      label: 'Organizing Tips',
+      label: 'Declutter Tips',
       onClick: () => setTipsOpen(true)
+    },
+    {
+      label: 'Keep or Let Go?',
+      onClick: () => {
+        
+      }
     }
   ];
 
@@ -105,18 +107,8 @@ export default function Declutter() {
         <ProjectNotesModal
           open={notesOpen}
           initialNotes={notes}
+          zoneName={zoneName}
           onClose={() => setNotesOpen(false)}
-          onSave={newNotes => {
-            // Save notes to current project
-            const projects = loadProjects();
-            const idx = projects.findIndex(p => p.zoneName === zoneName);
-            if (idx !== -1) {
-              projects[idx].notes = newNotes;
-              saveProjects(projects);
-            }
-            setNotes(newNotes);
-            setNotesOpen(false);
-          }}
         />
         <h1 style={inlineStyles.heading}>
           Sort & Declutter
@@ -141,7 +133,7 @@ export default function Declutter() {
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={declutterMessages} />
         
-        <button style={inlineStyles.button} onClick={handleNextStep}>
+        <button className={styles.button} onClick={handleNextStep}>
           Next
         </button>
         <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
@@ -183,16 +175,5 @@ const inlineStyles = {
     fontSize: '1.5rem',                  // Header font size
     color: '#222',                       // Darker header text
     marginBottom: '0.5rem',              // Space below header
-  },
-  button: {
-    padding: '1rem 2rem',                // Padding inside button
-    fontSize: '1rem',                    // Standard font size
-    borderRadius: '8px',                 // Rounded corners
-    border: 'none',                      // No border
-    cursor: 'pointer',                   // Pointer cursor on hover
-    backgroundColor: '#007bff',          // Bootstrap blue
-    color: 'white',                      // White text
-    width: '250px',                      // Fixed width
-    transition: 'background-color 0.2s', // Smooth color transition
-  },
+  }
 };

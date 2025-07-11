@@ -2,8 +2,8 @@
   position: fixed;
   top: 1rem;
   left: 1rem;
-  background-color: #007bff;
-  color: white;
+  background-color: #b2e0eb;
+  color: #333;
   border: none;
   border-radius: 8px;
   padding: 0.5rem 1rem;
@@ -17,6 +17,19 @@
 }
 
 .menu-button:hover {
-  background-color: #0056b3;
+  background-color: #b2e0eb;
 }
+
+.button {
+  padding: 1rem 2rem;                /* Padding inside button */
+  font-size: 1rem;                   /* Standard font size */
+  border-radius: 8px;                /* Rounded corners */
+  border: none;                      /* No border */
+  cursor: pointer;                   /* Pointer cursor on hover */
+  background-color: #b2e0eb;         /* Bootstrap blue */
+  color: #333;                      /* White text */
+  width: 250px;                      /* Fixed width */
+  transition: background-color 0.2s; /* Smooth color transition */
+}
+
 

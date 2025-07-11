@@ -45,8 +45,8 @@ const styles = {
     borderRadius: '8px',
     border: 'none',
     cursor: 'pointer',
-    backgroundColor: '#007bff',
-    color: 'white',
+    backgroundColor: '#b2e0eb',
+    color: '#333',
     transition: 'background-color 0.2s',
   },
 };

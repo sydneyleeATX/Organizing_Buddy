@@ -49,16 +49,6 @@ const inlineStyles = {
     width: '80%',
     maxWidth: '300px',
   },
-  button: {
-    padding: '1rem 2rem',
-    fontSize: '1rem',
-    borderRadius: '8px',
-    border: 'none',
-    cursor: 'pointer',
-    backgroundColor: '#007bff',
-    color: 'white',
-    marginTop: '1rem',
-  },
   skipButton: {
     padding: '1rem 2rem',
     fontSize: '1rem',
@@ -185,7 +175,7 @@ export default function Zone() {
               style={inlineStyles.input}
             />
           {/* Confirmation button to proceed */}
-            <button style={inlineStyles.button} onClick={handleConfirmZoneName}>
+            <button className={styles.button} onClick={handleConfirmZoneName}>
               Submit
             </button>
           </>
@@ -224,7 +214,7 @@ export default function Zone() {
               Great, we are organizing your {zoneName}!
             </p>
             {/* Button to proceed to the next step (empty.js) */}
-            <button style={inlineStyles.button} onClick={() => handleZoneConfirm(zoneName)}>
+            <button className={styles.button} onClick={() => handleZoneConfirm(zoneName)}>
               Let's Go!
             </button>
           </>

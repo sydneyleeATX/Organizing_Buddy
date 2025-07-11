@@ -6,7 +6,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #b2e0eb;
   color: white;
   border: none;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -18,29 +18,49 @@
   z-index: 1000;
 }
 
-.fabPopupOverlay {
+/* Overlay for side panel */
+.sidePanelOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.2);
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 0;  /* full height */
+  left: 0; /* full width */
+  width: 100vw; /* full width */
+  height: 100vh; /* full height */
+  z-index: 2000; /* controls stacking order, Elements with a higher z-index value will appear on top of elements with a lower z-index */
+  background: none;
 }
 
-.fabPopup {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem 1.5rem 1.5rem 1.5rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+/* Side panel floats above FAB, fits content */
+.sidePanel {
+  position: absolute;
+  bottom: 56px; /* directly above FAB */
+  right: 0;
+  background: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.10);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-width: 240px;
-  position: relative;
+  align-items: flex-start;
+  padding: 1.2rem 1.3rem 1.2rem 1.3rem;
+  min-width: 210px;
+  width: max-content;
+  max-width: 92vw;
+  z-index: 2100;
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(.4,0,.2,1);
+  opacity: 1;
+}
+
+.closeSidePanel {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: #888;
+  cursor: pointer;
+  z-index: 2200;
+  padding: 0;
+  line-height: 1;
 }
 
 .fabPopupButton {
@@ -49,8 +69,8 @@
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  background-color: #007bff;
-  color: white;
+  background-color: #b2e0eb;
+  color: '#333';
   width: 250px;
   transition: background-color 0.2s;
   margin-bottom: 1rem;

@@ -15,15 +15,19 @@ import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject } from '../utils/projectUtils';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
+import ChatExpert from '../components/ChatExpert';
 
 
 
 export default function Clean() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space';
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [notes, setNotes] = useState('');
 
   const handleNextStep = () => {
     updateProjectStep(zoneName, 'categorize');
@@ -46,8 +50,6 @@ export default function Clean() {
   ];
 
   // Empty FAB actions for this page
-  const [notesOpen, setNotesOpen] = useState(false);
-  const [notes, setNotes] = useState('');
   // Load notes for this project on open
   const getCurrentProject = () => {
     const projects = loadProjects();
@@ -61,6 +63,10 @@ export default function Clean() {
         setNotes(project && project.notes ? project.notes : '');
         setNotesOpen(true);
       }
+    }, 
+    {
+      label: 'Ask an Expert',
+      onClick: () => setChatOpen(true)
     }
   ];
 
@@ -87,21 +93,8 @@ export default function Clean() {
         <ProjectNotesModal
           open={notesOpen}
           initialNotes={notes}
+          zoneName={zoneName}
           onClose={() => setNotesOpen(false)}
-          onSave={newNotes => {
-            const projects = loadProjects();
-            // Only update the most recent in-progress project with this zoneName
-            const idx = [...projects].reverse().findIndex(
-              p => p.zoneName === zoneName && p.status !== 'completed'
-            );
-            if (idx !== -1) {
-              const realIdx = projects.length - 1 - idx;
-              projects[realIdx].notes = newNotes;
-              saveProjects(projects);
-            }
-            setNotes(newNotes);
-            setNotesOpen(false);
-          }}
         />
         <h1 style={inlineStyles.heading}>
           Clean Up
@@ -113,10 +106,11 @@ export default function Clean() {
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={cleanMessages} />
 
-        <button style={inlineStyles.button} onClick={handleNextStep}>
+        <button className={styles.button} onClick={handleNextStep}>
           I'm ready to categorize
         </button>
       </div>
+      <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
     </Layout>
   );
 }
@@ -143,16 +137,5 @@ const inlineStyles = {
     fontSize: '1.1rem',                  // Standard font size
     color: '#333',                       // Text color
     marginBottom: '2rem',                // Space below description
-  },
-  button: {
-    padding: '1rem 2rem',                // Padding inside button
-    fontSize: '1rem',                    // Standard font size
-    borderRadius: '8px',                 // Rounded corners
-    border: 'none',                      // No border
-    cursor: 'pointer',                   // Pointer cursor on hover
-    backgroundColor: '#007bff',          // Bootstrap blue
-    color: 'white',                      // White text
-    width: '250px',                      // Fixed width
-    transition: 'background-color 0.2s', // Smooth color transition
-  },
+  }
 };

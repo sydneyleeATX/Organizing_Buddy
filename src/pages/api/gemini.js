@@ -30,6 +30,7 @@ export default async function handler(req, res) {
   // For Gemini Pro: https://ai.google.dev/api/rest/v1beta/models/gemini-pro:generateContent
   // Most Google AI Studio API keys support gemini-1.5-flash-latest by default.
   // If you get a model not found error, try switching to gemini-1.5-pro-latest or check your AI Studio dashboard.
+  // This model supports basic reasoning, text input/output, and is most cost effective
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=' + apiKey;
   // arrow function that maps over messages array, returns text of user messages
   // checks if sender is user, if so, returns text, otherwise returns empty string

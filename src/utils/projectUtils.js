@@ -60,3 +60,8 @@ export const deleteProject = (projectId) => {  // deletes project from localStor
   // Save the updated array to localStorage
   localStorage.setItem('projects', JSON.stringify(projects));
 };
+
+export function getCurrentProject(zoneName) {
+  const projects = loadProjects();
+  return projects.find(p => p.zoneName === zoneName);
+}

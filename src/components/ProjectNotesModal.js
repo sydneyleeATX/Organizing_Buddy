@@ -65,8 +65,11 @@ const modalStyles = {
   },
 };
 
-const ProjectNotesModal = ({ open, initialNotes, onClose, onSave }) => {
+import { loadProjects, saveProjects } from '../utils/projectUtils';
+
+const ProjectNotesModal = ({ open, initialNotes, zoneName, onClose, onSave }) => {
   const [notes, setNotes] = useState(initialNotes || '');
+
 
   useEffect(() => {
     setNotes(initialNotes || '');
@@ -85,9 +88,20 @@ const ProjectNotesModal = ({ open, initialNotes, onClose, onSave }) => {
           onChange={e => setNotes(e.target.value)}
           placeholder="Add notes about this project..."
         />
-        <button style={modalStyles.saveBtn} onClick={() => onSave(notes)}>
-          Save
-        </button>
+        <button style={modalStyles.saveBtn} onClick={() => {
+      if (zoneName) {
+        const projects = loadProjects();
+        const idx = projects.findIndex(p => p.zoneName === zoneName);
+        if (idx !== -1) {
+          projects[idx].notes = notes;
+          saveProjects(projects);
+        }
+      }
+      if (onSave) onSave(notes);
+      onClose();
+    }}>
+      Save
+    </button>
       </div>
     </div>
   );

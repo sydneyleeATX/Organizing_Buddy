@@ -17,13 +17,17 @@ import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import ImageUploader from '../components/ImageUpload';
-import { updateProjectStep, getCurrentProject, loadProjects, saveProjects } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep } from '../utils/projectUtils';
 import ProductSuggestions from '../components/ProductSuggestions';
 import fabStyles from '../components/FabButton.module.css';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 import ChatExpert from '../components/ChatExpert';
 import StorageTips from '../components/StorageTips';
+import Timeline from '../components/Timeline';
+import ForwardButton from '../components/ForwardButton';
+import CheckBox from '../components/CheckBox';
+import FabButton from '../components/FabButton';
 
 
 export default function Return() {
@@ -163,24 +167,24 @@ export default function Return() {
 
   // Back button handler: update most recent project step to 'categorize' and go to categorize page
   const handleBack = () => {
-    const projects = loadProjects();
-    // Only update the most recent in-progress project with this zoneName
-    const idx = [...projects].reverse().findIndex(
-      project => project.zoneName === zoneName && project.status !== 'completed'
-    );
-    if (idx !== -1) {
-      const realIdx = projects.length - 1 - idx;
-      projects[realIdx].currentStep = 'categorize';
-      projects[realIdx].status = 'in-progress';
-      projects[realIdx].lastUpdated = new Date().toISOString();
-      saveProjects(projects);
-    }
     router.push(`/categorize?zoneName=${encodeURIComponent(zoneName)}`);
+  };
+  // forward arrow 
+  const handleForward = () => {
+    router.push(`/complete?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
   return (
     <Layout fabActions={fabActions}>
       <BackButton onClick={handleBack} ariaLabel="Back to categorize" />
+      <div className={styles['bottom-button-container']}>
+        <ForwardButton 
+          onClick={handleForward} 
+          ariaLabel="Forward to declutter" 
+          style={{ position: 'static', right: 'unset', bottom: 'unset' }} 
+        />
+        <FabButton actions={fabActions} />
+      </div>
       <ProjectNotesModal
               open={notesOpen}
               initialNotes={notes}
@@ -190,38 +194,48 @@ export default function Return() {
       <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
       <StorageTips open={storageTipsOpen} onClose={() => setStorageTipsOpen(false)} />
       <div style={inlineStyles.container}>
-        <h1 style={inlineStyles.heading}>
-          Return Items
-        </h1>
+        {/* Container for heading and checkbox alignment*/}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <h1 style={inlineStyles.h1}>Return Items</h1>
+        </div>
 
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={returnMessages} />
 
-        {!confirmedItemsReturned && (
-          <>
-            <p style={inlineStyles.description}>
-              Put your categorized items back in your {zoneName}. Think about
-            </p>
-            <ul style={inlineStyles.ul}>
-              <li>Easy access: What do you use most often?</li>
-              <li>Vertical space: Can you stack items or use risers?</li>
-            </ul>
-            <button className={styles.button} onClick={handleConfirmItemsReturned}>
-              All items are returned!
-            </button>
-          </>
-        )}
-        {confirmedItemsReturned && (
-          <>
-            <p style={inlineStyles.p}>
-              Upload a photo of your organized space!
-            </p>
-            <ImageUploader onImageConfirmed={handlePhotoConfirmed} />
-            <button style={inlineStyles.skipButton} onClick={() => setSkipPhoto(true)}>
-              Skip Photo
-            </button>
-          </>
-        )}
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem', width: '100%' }}>
+          {/* Left: Timeline */}
+          <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
+            <Timeline currentStep="return" />
+          </div>
+          {/* Right: Description or Photo Upload */}
+          <div style={{ flex: '2 1 66%', minWidth: 0, maxWidth: 320, width: '100%' }}>
+            {!confirmedItemsReturned ? (
+              <>
+                <p style={inlineStyles.description}>
+                  Put your categorized items back in your {zoneName}. Think about
+                </p>
+                <ul style={inlineStyles.ul}>
+                  <li>Easy access: What do you use most often?</li>
+                  <li>Vertical space: Can you stack items or use risers?</li>
+                </ul>
+                <button className={styles.button} onClick={handleConfirmItemsReturned}>
+                  All items are returned!
+                </button>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: '1.2rem', margin: 0, textAlign: 'left', lineHeight: 1.5, color: '#333', wordBreak: 'break-word' }}>
+                  Upload a photo of your organized space!
+                </p>
+                <ImageUploader onImageConfirmed={handlePhotoConfirmed} />
+                <button onClick={() => setSkipPhoto(true)} style={{ marginTop: '1.2rem' }}>
+                  Skip Photo
+                </button>
+              </>
+            )}
+          </div>
+        </div>
 
         {/* When skipPhoto is set to true, automatically call handleNextStep to proceed. 
         If you want to perform logic that causes side effects (such as navigation, updating state, fetching data => use useEffect) */}

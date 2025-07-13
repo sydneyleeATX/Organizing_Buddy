@@ -18,11 +18,15 @@ import ChatExpert from '../components/ChatExpert';
 import DeclutterTips from '../components/DeclutterTips';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep, getCurrentProject } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, regressProjectStep } from '../utils/projectUtils';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 const { loadProjects, saveProjects } = require('../utils/projectUtils');
 import KeepQuiz from '../components/KeepQuiz';
+import Timeline from '../components/Timeline';
+import ForwardButton from '../components/ForwardButton';
+import FabButton from '../components/FabButton';
+import CheckBox from '../components/CheckBox';
 
 
 
@@ -89,47 +93,63 @@ export default function Declutter() {
 
     // Back button handler: update most recent project step to 'empty' and go to empty page
     const handleBack = () => {
-      const projects = loadProjects();
-      if (projects.length > 0) {
-        const lastProject = projects[projects.length - 1];
-        lastProject.currentStep = 'empty';
-        lastProject.status = 'in-progress';
-        lastProject.lastUpdated = new Date().toISOString();
-        saveProjects(projects);
-      }
       router.push(`/empty?zoneName=${encodeURIComponent(zoneName)}`);
+    };
+    const handleForward = () => {
+      router.push(`/clean?zoneName=${encodeURIComponent(zoneName)}`);
     };
 
     return (
-      <Layout fabActions={fabActions}>
+      <Layout>
         <BackButton onClick={handleBack} ariaLabel="Back to empty" />
+        <div className={styles['bottom-button-container']}>
+        <ForwardButton 
+          onClick={handleForward} 
+          ariaLabel="Forward to declutter" 
+          style={{ position: 'static', right: 'unset', bottom: 'unset' }} 
+        />
+        <FabButton actions={fabActions} />
+      </div>
         <div style={inlineStyles.container}>
-        <h1 style={inlineStyles.heading}>
-          Sort & Declutter
-        </h1>
-        <div style={inlineStyles.cardContainer}>
-          <div style={{ ...styles.card, backgroundColor: '#d4edda' }}>
-            <h2 style={styles.header}>KEEP</h2>
-            <p style={styles.description}>It belongs here & you use/love it.</p>
-          </div>
 
-          <div style={{ ...styles.card, backgroundColor: '#f8d7da' }}>
-            <h2 style={styles.header}>TOSS</h2>
-            <p style={styles.description}>It's broken, expired, or truly not needed.</p>
-          </div>
-
-          <div style={{ ...styles.card, backgroundColor: '#d1ecf1' }}>
-            <h2 style={styles.header}>RELOCATE</h2>
-            <p style={styles.description}>It belongs somewhere else in your home.</p>
-          </div>
-        </div>
 
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={declutterMessages} />
-        
-        <button className={styles.button} onClick={handleNextStep}>
-          Next
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <h1 style={inlineStyles.h1}>Sort & Declutter</h1>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
+          {/* Left: Timeline, about 1/3 width on desktop, full on mobile */}
+          <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
+            <Timeline currentStep="empty" />
+          </div>
+          {/* Right: Description */}
+
+          <div style={{ flex: '2 1 66%', minWidth: 0, maxWidth: 320, width: '100%' }}>
+            <p style={{ fontSize: '1.2rem', margin: 0, textAlign: 'left', lineHeight: 1.5, color: '#333', wordBreak: 'break-word' }}>
+              Sort the items into one of three categories:
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', width: '100%' }}>
+              <div style={{ background: '#d4edda', borderRadius: '10px', padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', border: '1px solid #b7e4c7' }}>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.3rem 0', color: '#155724', letterSpacing: '0.01em' }}>KEEP</h2>
+                <p style={{ margin: 0, color: '#155724', fontSize: '1rem', lineHeight: 1.4 }}>It belongs here & you use/love it.</p>
+              </div>
+              <div style={{ background: '#f8d7da', borderRadius: '10px', padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', border: '1px solid #f5c6cb' }}>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.3rem 0', color: '#721c24', letterSpacing: '0.01em' }}>TOSS</h2>
+                <p style={{ margin: 0, color: '#721c24', fontSize: '1rem', lineHeight: 1.4 }}>It's broken, expired, or truly not needed.</p>
+              </div>
+              <div style={{ background: '#d1ecf1', borderRadius: '10px', padding: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', border: '1px solid #bee5eb' }}>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.3rem 0', color: '#0c5460', letterSpacing: '0.01em' }}>RELOCATE</h2>
+                <p style={{ margin: 0, color: '#0c5460', fontSize: '1rem', lineHeight: 1.4 }}>It belongs somewhere else in your home.</p>
+              </div>
+            </div>
+            <button className={styles.button} onClick={handleNextStep} style={{ paddingTop: '1.2rem', marginTop: '1.2rem' }}>
+              Next
+            </button>
+          </div>
+        </div>
+  
         <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
         <DeclutterTips open={tipsOpen} onClose={() => setTipsOpen(false)} />
         <KeepQuiz open={keepQuizOpen} onClose={() => setKeepQuizOpen(false)} />

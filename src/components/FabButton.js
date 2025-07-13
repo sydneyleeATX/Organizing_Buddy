@@ -8,14 +8,14 @@ import { faHammer } from '@fortawesome/free-solid-svg-icons';
  * Props:
  *  - actions: Array of objects with { label, onClick } for each quick action button.
  */
-const FabButton = ({ actions }) => {
+const FabButton = ({ actions, style = {} }) => {
   // State to control whether the popup is open
   const [open, setOpen] = useState(false);
 
   return (
     <>
       {/* Floating Action Button (FAB) */}
-      <button className={styles.fabButton} onClick={() => setOpen(true)}>
+      <button className={styles.fabButton} style={style} onClick={() => setOpen(true)}>
         <FontAwesomeIcon icon={faHammer} style={{color: "#ffffff"}} />
       </button>
       {/* Side panel overlay and drawer, shown only when open */}

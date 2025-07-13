@@ -1,8 +1,8 @@
 /* FAB Button Styles */
 .fabButton {
-  position: fixed;
+  /* position: fixed;
   bottom: 32px;
-  right: 32px;
+  right: 32px; */
   width: 56px;
   height: 56px;
   border-radius: 50%;

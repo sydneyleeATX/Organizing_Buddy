@@ -15,10 +15,15 @@ import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep, getCurrentProject } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, regressProjectStep } from '../utils/projectUtils';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 import ChatExpert from '../components/ChatExpert';
+import Timeline from '../components/Timeline';
+import ForwardButton from '../components/ForwardButton'
+import CheckBox from '../components/CheckBox';
+import FabButton from '../components/FabButton';
+
 
 
 
@@ -75,20 +80,23 @@ export default function Clean() {
 
   // Back button handler: update most recent project step to 'declutter' and go to declutter page
   const handleBack = () => {
-    const projects = loadProjects();
-    if (projects.length > 0) {
-      const lastProject = projects[projects.length - 1];
-      lastProject.currentStep = 'declutter';
-      lastProject.status = 'in-progress';
-      lastProject.lastUpdated = new Date().toISOString();
-      saveProjects(projects);
-    }
     router.push(`/declutter?zoneName=${encodeURIComponent(zoneName)}`);
+  };
+  const handleForward = () => {
+    router.push(`/categorize?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
   return (
-    <Layout fabActions={fabActions}>
+    <Layout>
       <BackButton onClick={handleBack} ariaLabel="Back to declutter" />
+      <div className={styles['bottom-button-container']}>
+        <ForwardButton 
+          onClick={handleForward} 
+          ariaLabel="Forward to declutter" 
+          style={{ position: 'static', right: 'unset', bottom: 'unset' }} 
+        />
+        <FabButton actions={fabActions} />
+      </div>
       <div style={inlineStyles.container}>
         <ProjectNotesModal
           open={notesOpen}
@@ -96,21 +104,31 @@ export default function Clean() {
           zoneName={zoneName}
           onClose={() => setNotesOpen(false)}
         />
-        <h1 style={inlineStyles.heading}>
-          Clean Up
-        </h1>
-        <p style={inlineStyles.description}>
-          Now that it's empty, give your {zoneName} a quick wipe down. Get rid of dust, crumbs, etc
-        </p>
-
+        {/* Container for heading and checkbox alignment*/}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <h1 style={inlineStyles.h1}>Clean the Space</h1>
+        </div>
+        {/*Description*/}
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
+          {/* Left: Timeline, about 1/3 width on desktop, full on mobile */}
+          <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
+            <Timeline currentStep="clean" />
+          </div>
+          {/* Right: Description */}
+          <div style={{ flex: '2 1 66%', minWidth: 0, maxWidth: 320, width: '100%' }}>
+            <p style={{ fontSize: '1.2rem', margin: 0, textAlign: 'left', lineHeight: 1.5, color: '#333', wordBreak: 'break-word' }}>
+              Now that it's empty, give your {zoneName} a quick wipe down. Get rid of dust, crumbs, etc
+            </p>
+            <button className={styles.button} onClick={handleNextStep}>
+              I'm ready to categorize
+            </button>
+          </div>
+        </div>
+        <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={cleanMessages} />
-
-        <button className={styles.button} onClick={handleNextStep}>
-          I'm ready to categorize
-        </button>
       </div>
-      <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
     </Layout>
   );
 }

@@ -12,12 +12,15 @@
 'use client';
 
 // Import necessary dependencies
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import ImageUploader from '../components/ImageUpload';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
+import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep } from '../utils/projectUtils';
 import SpaceSuggestions from '../components/SpaceSuggestions';
+import CheckBox from '../components/CheckBox';
+import FabButton from '../components/FabButton';
 
 // Inline styles
 const inlineStyles = {
@@ -148,9 +151,10 @@ export default function Zone() {
   };
 
   return (
-    <Layout fabActions={fabActions}> {/* Attach FAB actions to the Layout */}
+    <Layout> {/* Attach FAB actions to the Layout */}
       {/* SpaceSuggestions popup/modal. Appears when spaceSuggestionsOpen is true. */}
       {/* SpaceSuggestions modal: clicking a space fills the zoneName input, but does NOT submit */}
+      <FabButton actions={fabActions} style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 1200 }} />
       <SpaceSuggestions
         open={spaceSuggestionsOpen}
         onClose={() => setSpaceSuggestionsOpen(false)}
@@ -159,7 +163,10 @@ export default function Zone() {
       <div style={inlineStyles.container}>
 
         {/* Main heading asking user to define their focus area */}
-        <h1 style={inlineStyles.h1}>Define your Zone</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <h1 style={inlineStyles.h1}>Define your Zone</h1>
+        </div>
 
         {/* If zone name is NOT confirmed, show input field for zone name */}
         {!confirmedZoneName && (
@@ -189,14 +196,13 @@ export default function Zone() {
               Great, we are organizing your {zoneName}!
             </p>
             <p style={inlineStyles.p}>
-              Upload a "before" photo of your {zoneName}. When you finish this project the difference will be remarkable! 
-            </p>
+                  Upload a "before" photo of your {zoneName}. 
+                </p>
             {/* Render the ImageUploader component here */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
               <ImageUploader onImageConfirmed={handlePhotoConfirmed} />
               <button
                 type="button"
-                style={inlineStyles.skipButton}
                 onClick={() => setSkipPhoto(true)}
                 aria-label="Skip photo upload"
               >

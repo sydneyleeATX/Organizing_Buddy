@@ -13,16 +13,23 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import CelebrationPage from '../components/Confetti';
-import { updateProjectStep } from '../utils/projectUtils';
+import { updateProjectStep, regressProjectStep } from '../utils/projectUtils';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-
-
+import BackButton from '../components/BackButton';
+import { loadProjects, saveProjects } from '../utils/projectUtils';
+import CheckBox from '../components/CheckBox';
 
 export default function Complete() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
   
+  // Move back a step
+  const handleBack = () => {
+
+    router.push(`/return?zoneName=${encodeURIComponent(zoneName)}`);
+  };
+
   return (
     <Layout>
       <div style={inline_styles.container}>
@@ -34,7 +41,9 @@ export default function Complete() {
           Great job! Your project is complete!
         </p>
       </div>
+      <BackButton onClick={handleBack} ariaLabel="Back to return" />
     </Layout>
+    
   );
 }
 

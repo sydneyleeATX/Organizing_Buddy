@@ -15,10 +15,14 @@ import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep, getCurrentProject } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep } from '../utils/projectUtils';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 import ChatExpert from '../components/ChatExpert';
+import Timeline from '../components/Timeline';
+import ForwardButton from '../components/ForwardButton';
+import CheckBox from '../components/CheckBox';
+import FabButton from '../components/FabButton';
 
 export default function Categorize() {
   const router = useRouter();
@@ -88,35 +92,47 @@ export default function Categorize() {
 
   // Back button handler: update most recent project step to 'clean' and go to clean page
   const handleBack = () => {
-    const projects = loadProjects();
-    if (projects.length > 0) {
-      const lastProject = projects[projects.length - 1];
-      lastProject.currentStep = 'clean';
-      lastProject.status = 'in-progress';
-      lastProject.lastUpdated = new Date().toISOString();
-      saveProjects(projects);
-    }
     router.push(`/clean?zoneName=${encodeURIComponent(zoneName)}`);
+  };
+  // forward arrow 
+  const handleForward = () => {
+    router.push(`/return?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
   return (
-    <Layout fabActions={fabActions}>
+    <Layout>
       <BackButton onClick={handleBack} ariaLabel="Back to clean" />
+      <div className={styles['bottom-button-container']}>
+        <ForwardButton 
+          onClick={handleForward} 
+          ariaLabel="Forward to declutter" 
+          style={{ position: 'static', right: 'unset', bottom: 'unset' }} 
+        />
+        <FabButton actions={fabActions} />
+      </div>
       <div style={inlineStyles.container}>
-      {/* Main heading for the categorization section */}
-        <h1 style={inlineStyles.heading}>
-          Categorize Items
-        </h1>
-        <p style={inlineStyles.description}>
-          Now group your 'KEEP' items. Pens with pens, spices with spices, etc
-        </p>
-
-        {/* Calling EncouragementPopup component and passing messages array as argument */}
-        <EncouragementPopup messages={categorizeMessages} />
-
-        <button className={styles.button} onClick={handleNextStep}>
-          The items are categorized!
-        </button>
+        {/* Container for heading and checkbox alignment*/}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <h1 style={inlineStyles.h1}>Categorize</h1>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
+          {/* Left: Timeline, about 1/3 width on desktop, full on mobile */}
+          <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
+            <Timeline currentStep="categorize" />
+          </div>
+          {/* Right: Description */}
+          <div style={{ flex: '2 1 66%', minWidth: 0, maxWidth: 320, width: '100%' }}>
+            <p style={{ fontSize: '1.2rem', margin: 0, textAlign: 'left', lineHeight: 1.5, color: '#333', wordBreak: 'break-word' }}>
+              Now group your 'KEEP' items. Pens with pens, spices with spices, etc.
+            </p>
+            {/* EncouragementPopup and Next button */}
+            <EncouragementPopup messages={categorizeMessages} />
+            <button className={styles.button} onClick={handleNextStep} style={{ marginTop: '1.2rem' }}>
+              The items are categorized!
+            </button>
+          </div>
+        </div>
       </div>
       <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
       <ProjectNotesModal

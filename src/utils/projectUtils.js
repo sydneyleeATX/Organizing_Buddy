@@ -4,13 +4,20 @@
  */
 
 
-export const updateProjectStep = (zoneName, newStep) => {  // updates the project step in localStorage
-  console.log('[updateProjectStep] Called with:', { zoneName, newStep });
+export const updateProjectStep = (zoneName, doneSteps) => {  // updates the project step in localStorage
+  console.log('[updateProjectStep] Called with:', { zoneName, doneSteps });
   const stored = localStorage.getItem('projects');  // get projects from localStorage
   const projects = stored ? JSON.parse(stored) : [];  // parse projects from localStorage
   console.log('[updateProjectStep] Original projects array:', projects);
 
-  // Determine the status based on the new step
+  // Define the hierarchical order of steps
+  const orderedSteps = ['zone', 'empty', 'declutter', 'clean', 'categorize', 'return', 'complete'];
+
+  // Find the first (leftmost) step in the array that is NOT present in doneSteps
+  let currentStep = orderedSteps.find(step => !doneSteps.includes(step));
+  if (!currentStep) currentStep = 'complete'; // If all steps are done
+
+  // Determine the status based on the current step
   const getStatus = (step) => {
     switch(step) {
       case 'complete':
@@ -28,8 +35,8 @@ export const updateProjectStep = (zoneName, newStep) => {  // updates the projec
     const realIdx = projects.length - 1 - idx;
     projects[realIdx] = {
       ...projects[realIdx],
-      currentStep: newStep,
-      status: getStatus(newStep),
+      currentStep: currentStep,
+      status: getStatus(currentStep),
       lastUpdated: new Date().toISOString()
     };
     saveProjects(projects);  // save updated array to localStorage
@@ -65,3 +72,23 @@ export function getCurrentProject(zoneName) {
   const projects = loadProjects();
   return projects.find(p => p.zoneName === zoneName);
 }
+
+export function regressProjectStep(zoneName) {
+  const projects = loadProjects();
+  const idx = [...projects].reverse().findIndex(
+    project => project.zoneName === zoneName && project.status !== 'completed'
+  );
+  if (idx !== -1) {
+    const realIdx = projects.length - 1 - idx;
+    projects[realIdx] = {
+      ...projects[realIdx],
+      currentStep: 'empty',
+      status: 'in-progress',
+      lastUpdated: new Date().toISOString()
+    };
+    saveProjects(projects);
+    console.log('[regressProjectStep] Updated projects array:', projects);
+  }
+}
+
+

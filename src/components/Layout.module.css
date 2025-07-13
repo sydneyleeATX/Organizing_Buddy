@@ -32,4 +32,18 @@
   transition: background-color 0.2s; /* Smooth color transition */
 }
 
+.bottom-button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.checkbox {
+  margin-right: 12px;
+}
+  
+
 

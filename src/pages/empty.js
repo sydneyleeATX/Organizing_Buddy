@@ -4,10 +4,14 @@ import { useRouter } from 'next/router'; // Import Next.js' router for navigatio
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep, getCurrentProject } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, regressProjectStep } from '../utils/projectUtils';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 import ChatExpert from '../components/ChatExpert';
+import Timeline from '../components/Timeline';
+import ForwardButton from '../components/ForwardButton';
+import FabButton from '../components/FabButton';
+import CheckBox from '../components/CheckBox';
 
 
 // Menu component with navigation buttons
@@ -95,32 +99,56 @@ const inlineStyles = {
     }
     router.push('/zone');
   };
+  // forward button handler
+  const handleForward = () => {
+    router.push('/declutter');
+  };
 
   return (
-    <Layout fabActions={fabActions}>
+    <Layout>
       <BackButton onClick={handleBack} ariaLabel="Back to zone" />
+      <div className={styles['bottom-button-container']}>
+        <ForwardButton 
+          onClick={handleForward} 
+          ariaLabel="Forward to declutter" 
+          style={{ position: 'static', right: 'unset', bottom: 'unset' }} 
+        />
+        <FabButton actions={fabActions} />
+      </div>
+      {/*Top heading*/}
       <div style={inlineStyles.container}>
-        <h1 style={inlineStyles.heading}>
-          Empty {zoneName}
-        </h1>
-        <p style={inlineStyles.description}>
-          Take everything out of your {zoneName}. Put it on a clear surface nearby.
-        </p>
-
+        {/* container used for checkbox and heading alignment */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <h1 style={inlineStyles.h1}>Empty</h1>
+        </div>
+        
+        {/*Description*/}
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
+          {/* Left: Timeline, about 1/3 width on desktop, full on mobile */}
+          <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
+            <Timeline currentStep="empty" />
+          </div>
+          {/* Right: Description */}
+          <div style={{ flex: '2 1 66%', minWidth: 0, maxWidth: 320, width: '100%' }}>
+            <p style={{ fontSize: '1.2rem', margin: 0, textAlign: 'left', lineHeight: 1.5, color: '#333', wordBreak: 'break-word' }}>
+              Take everything out of your zone. Put it on a clear surface nearby.
+            </p>
+          </div>
+        </div>
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={emptyMessages} />
-
         {/* Button to start a new project by navigating to /declutter */}
         <button className={styles.button} onClick={handleNextStep}>
           I'm ready to sort
         </button>
-      <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
-      <ProjectNotesModal
+        <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
+        <ProjectNotesModal
           open={notesOpen}
           initialNotes={notes}
           zoneName={zoneName}
           onClose={() => setNotesOpen(false)}
-      />
+        />
       </div>
     </Layout>
   );

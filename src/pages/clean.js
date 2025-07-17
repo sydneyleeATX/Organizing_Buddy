@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep, getCurrentProject, regressProjectStep } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, regressProjectStep, completedSteps } from '../utils/projectUtils';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 import ChatExpert from '../components/ChatExpert';
@@ -106,7 +106,7 @@ export default function Clean() {
         />
         {/* Container for heading and checkbox alignment*/}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <CheckBox zoneName={zoneName} markedStep="clean" className={styles.checkbox} />
           <h1 style={inlineStyles.h1}>Clean the Space</h1>
         </div>
         {/*Description*/}

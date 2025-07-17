@@ -113,7 +113,7 @@ export default function Categorize() {
       <div style={inlineStyles.container}>
         {/* Container for heading and checkbox alignment*/}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <CheckBox zoneName={zoneName} markedStep="categorize" className={styles.checkbox} />
           <h1 style={inlineStyles.h1}>Categorize</h1>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>

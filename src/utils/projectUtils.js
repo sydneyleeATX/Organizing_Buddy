@@ -42,11 +42,48 @@ export const updateProjectStep = (zoneName, doneSteps) => {  // updates the proj
     saveProjects(projects);  // save updated array to localStorage
     console.log('[updateProjectStep] Updated projects array:', projects);
   }
+  console.log('[doneSteps] doneSteps within projectUtils.js:', doneSteps);               // why is this only called when box unchecked?
 };
 
 export const saveProjects = (updatedProjects) => {  // saves projects to localStorage
   localStorage.setItem('projects', JSON.stringify(updatedProjects));
 };
+
+/**
+ * completedSteps - get or update the array of completed steps for a project
+ * @param {string} zoneName - the project zone name
+ * @param {string} step - the step to add or remove
+ * @param {string} action - 'add' | 'remove' | undefined
+ * @returns {Array} - the array of completed steps
+ */
+export function completedSteps(zoneName, step, action) {
+  // action: 'add' | 'remove' | undefined
+  // load projects from local storage
+  const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+  // find the most recent project with this zoneName
+  const idx = [...projects].reverse().findIndex(
+    project => project.zoneName === zoneName && project.status !== 'completed'
+  );
+  // if found, update the doneSteps array
+  if (idx !== -1) {
+    const realIdx = projects.length - 1 - idx;
+    // get the doneSteps array
+    let doneSteps = projects[realIdx].doneSteps || [];
+    // if step is add, the step is valid, and the step is not already in the array, add it
+    if (action === 'add' && step && !doneSteps.includes(step)) {
+      doneSteps.push(step);
+    } else if (action === 'remove' && step) {
+      // if step is remove, the step is valid, and the step is in the array, remove it
+      doneSteps = doneSteps.filter(s => s !== step);
+    }
+    // update the project in localStorage
+    projects[realIdx].doneSteps = doneSteps;
+    localStorage.setItem('projects', JSON.stringify(projects));
+    return doneSteps;
+  }
+  return [];
+}
+
 
 export const loadProjects = () => {  // loads projects from localStorage
   const stored = localStorage.getItem('projects');

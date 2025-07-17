@@ -17,7 +17,7 @@ import { useRouter } from 'next/router';
 import ImageUploader from '../components/ImageUpload';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep, completedSteps } from '../utils/projectUtils';
 import SpaceSuggestions from '../components/SpaceSuggestions';
 import CheckBox from '../components/CheckBox';
 import FabButton from '../components/FabButton';
@@ -88,6 +88,8 @@ export default function Zone() {
   const [spaceSuggestionsOpen, setSpaceSuggestionsOpen] = useState(false);
   // Tracks whether the user has skipped the photo step
   const [skipPhoto, setSkipPhoto] = useState(false);
+  // Tracks whether the project has been created
+  const [projectCreated, setProjectCreated] = useState(false);
 
 
   // Floating Action Button (FAB) actions for this page
@@ -131,12 +133,13 @@ export default function Zone() {
       id: generateUniqueID(),
       zoneName,
       startDate: new Date().toISOString().split('T')[0],
-      currentStep: 'empty',
+      currentStep: 'zone',
       status: 'in-progress',
       lastUpdated: new Date().toISOString(),
       startPhoto: zonePhoto,
       endPhoto: null,
-      notes: ''
+      notes: '',
+      doneSteps: [],
     };
     console.log('[createNewProject] New project:', newProject);
 
@@ -145,8 +148,21 @@ export default function Zone() {
     localStorage.setItem('projects', JSON.stringify(updatedProjects));
   };
 
+ 
+
+  // automatically called if the bottom list of variables changes
+  useEffect(() => {
+    if (
+      confirmedZoneName &&
+      (confirmedZonePhoto || skipPhoto) &&
+      !projectCreated
+    ) {
+      createNewProject(zoneName);
+      setProjectCreated(true);
+    }  //if zone name is confirmed, create a new project if it hasn't aleady been created while viewing this zone page
+  }, [confirmedZoneName, confirmedZonePhoto, skipPhoto, zoneName, projectCreated]);
+
   const handleZoneConfirm = () => {
-    createNewProject(zoneName);
     router.push(`/empty?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
@@ -163,14 +179,14 @@ export default function Zone() {
       <div style={inlineStyles.container}>
 
         {/* Main heading asking user to define their focus area */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} className={styles.checkbox} />
-          <h1 style={inlineStyles.h1}>Define your Zone</h1>
-        </div>
+        
 
         {/* If zone name is NOT confirmed, show input field for zone name */}
         {!confirmedZoneName && (
           <>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+            <h1 style={inlineStyles.h1}>Define your Zone</h1>
+          </div>
             <p style={inlineStyles.p}>
               Let's define your focus area. What space are you organizing?
             </p>
@@ -192,12 +208,15 @@ export default function Zone() {
         {/* If zone name IS confirmed, but photo is not uploaded yet, show image uploader */}
         {confirmedZoneName && !confirmedZonePhoto && !skipPhoto && (
           <>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+              <h1 style={inlineStyles.h1}>Define your Zone</h1>
+            </div>
             <p style={inlineStyles.p}>
               Great, we are organizing your {zoneName}!
             </p>
             <p style={inlineStyles.p}>
-                  Upload a "before" photo of your {zoneName}. 
-                </p>
+              Upload a "before" photo of your {zoneName}.
+            </p>
             {/* Render the ImageUploader component here */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
               <ImageUploader onImageConfirmed={handlePhotoConfirmed} />
@@ -216,6 +235,10 @@ export default function Zone() {
         {/* If zone name is confirmed and photo is uploaded, show the "Let's Go!" button */}
         {confirmedZoneName && (confirmedZonePhoto || skipPhoto) && (
           <>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+            <CheckBox zoneName={zoneName} markedStep="zone" className={styles.checkbox} />
+              <h1 style={inlineStyles.h1}>Define your Zone</h1>
+            </div>
             <p style={inlineStyles.p}>
               Great, we are organizing your {zoneName}!
             </p>

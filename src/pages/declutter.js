@@ -87,7 +87,6 @@ export default function Declutter() {
       alert("There was an issue identifying your project zone in Declutter. Please go back and try again.");
       return; 
     }
-    updateProjectStep(zoneName, 'clean');
     router.push(`/clean?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
@@ -116,7 +115,7 @@ export default function Declutter() {
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={declutterMessages} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <CheckBox zoneName={zoneName} markedStep="declutter" className={styles.checkbox} />
           <h1 style={inlineStyles.h1}>Sort & Declutter</h1>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>

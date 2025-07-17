@@ -196,7 +196,7 @@ export default function Return() {
       <div style={inlineStyles.container}>
         {/* Container for heading and checkbox alignment*/}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} className={styles.checkbox} />
+          <CheckBox zoneName={zoneName} markedStep="return" className={styles.checkbox} />
           <h1 style={inlineStyles.h1}>Return Items</h1>
         </div>
 

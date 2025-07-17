@@ -132,9 +132,11 @@ export default function Zone() {
     const newProject = {
       id: generateUniqueID(),
       zoneName,
+      // start date is today
       startDate: new Date().toISOString().split('T')[0],
       currentStep: 'zone',
       status: 'in-progress',
+      // last updated is now
       lastUpdated: new Date().toISOString(),
       startPhoto: zonePhoto,
       endPhoto: null,

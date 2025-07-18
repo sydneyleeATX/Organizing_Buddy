@@ -75,6 +75,8 @@ export default function Zone() {
   // Initialize Next.js router for navigation
   const router = useRouter();
 
+ 
+
   // State variables to track user input and confirmation status
   // User's input for their zone name
   const [zoneName, setZoneName] = useState('');
@@ -90,7 +92,36 @@ export default function Zone() {
   const [skipPhoto, setSkipPhoto] = useState(false);
   // Tracks whether the project has been created
   const [projectCreated, setProjectCreated] = useState(false);
+ // Track if we are resuming an existing project
+ const [isResumingProject, setIsResumingProject] = useState(false);
 
+ // Restore state if resuming a project
+ useEffect(() => {
+   if (!router.isReady) return;
+   const { zoneName: queryZoneName } = router.query;
+   if (queryZoneName) {
+     const stored = localStorage.getItem('projects');
+     const projects = stored ? JSON.parse(stored) : [];
+     const project = projects.find(p => p.zoneName === queryZoneName && p.status !== 'completed');
+     if (project) {
+       // If the project is at a later step, redirect to that page
+       if (project.currentStep && project.currentStep !== 'zone') {
+         router.replace(`/${project.currentStep}?zoneName=${encodeURIComponent(project.zoneName)}`);
+         return;
+       }
+       // Restore state for "zone" step
+       setZoneName(project.zoneName || '');
+       setConfirmedZoneName(true);
+       if (project.startPhoto) {
+         setZonePhoto(project.startPhoto);
+         setConfirmedZonePhoto(true);
+       } else if (project.startPhoto === null && project.skipPhoto) {
+         setSkipPhoto(true);
+       }
+       setIsResumingProject(true);
+     }
+   }
+ }, [router.isReady, router.query]);
 
   // Floating Action Button (FAB) actions for this page
   // Each action is shown in the FAB menu. The Space Suggestions action opens the modal.
@@ -133,15 +164,15 @@ export default function Zone() {
       id: generateUniqueID(),
       zoneName,
       // start date is today
-      startDate: new Date().toISOString().split('T')[0],
+      startDate: new Date().toLocaleString(),
       currentStep: 'zone',
-      status: 'in-progress',
+      status: 'In Progress',
       // last updated is now
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: new Date().toLocaleString(),
       startPhoto: zonePhoto,
       endPhoto: null,
       notes: '',
-      doneSteps: [],
+
     };
     console.log('[createNewProject] New project:', newProject);
 
@@ -157,12 +188,13 @@ export default function Zone() {
     if (
       confirmedZoneName &&
       (confirmedZonePhoto || skipPhoto) &&
-      !projectCreated
+      !projectCreated &&
+      !isResumingProject // Only create if NOT resuming
     ) {
       createNewProject(zoneName);
       setProjectCreated(true);
-    }  //if zone name is confirmed, create a new project if it hasn't aleady been created while viewing this zone page
-  }, [confirmedZoneName, confirmedZonePhoto, skipPhoto, zoneName, projectCreated]);
+    }
+  }, [confirmedZoneName, confirmedZonePhoto, skipPhoto, zoneName, projectCreated, isResumingProject]);
 
   const handleZoneConfirm = () => {
     router.push(`/empty?zoneName=${encodeURIComponent(zoneName)}`);

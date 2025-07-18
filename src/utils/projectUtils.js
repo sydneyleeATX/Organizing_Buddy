@@ -4,7 +4,18 @@
  */
 
 
-export const updateProjectStep = (zoneName, doneSteps) => {  // updates the project step in localStorage
+export const updateProjectStep = (zoneName, doneStepsInput) => {  // updates the project step in localStorage
+  // Try to retrieve the latest doneSteps using context if available
+  let doneSteps = doneStepsInput;
+  try {
+    // if being run on the client side, get the latest doneSteps from context
+    if (typeof window !== 'undefined' && window.__DONE_STEPS_CONTEXT__) {
+      doneSteps = window.__DONE_STEPS_CONTEXT__.getDoneSteps(zoneName);
+      console.log('[updateProjectStep] Got doneSteps from context:', doneSteps);
+    }
+  } catch (e) {
+    console.warn('[updateProjectStep] Could not get doneSteps from context:', e);
+  }
   console.log('[updateProjectStep] Called with:', { zoneName, doneSteps });
   const stored = localStorage.getItem('projects');  // get projects from localStorage
   const projects = stored ? JSON.parse(stored) : [];  // parse projects from localStorage
@@ -16,15 +27,12 @@ export const updateProjectStep = (zoneName, doneSteps) => {  // updates the proj
   // Find the first (leftmost) step in the array that is NOT present in doneSteps
   let currentStep = orderedSteps.find(step => !doneSteps.includes(step));
   if (!currentStep) currentStep = 'complete'; // If all steps are done
+  console.log('[updateProjectStep] Current step:', currentStep);
 
   // Determine the status based on the current step
   const getStatus = (step) => {
-    switch(step) {
-      case 'complete':
-        return 'completed';
-      default:
-        return 'in-progress';
-    }
+    if (step === 'complete') return 'Completed';
+    return 'In Progress';
   };
 
   // Only update the most recent in-progress project with this zoneName
@@ -42,47 +50,12 @@ export const updateProjectStep = (zoneName, doneSteps) => {  // updates the proj
     saveProjects(projects);  // save updated array to localStorage
     console.log('[updateProjectStep] Updated projects array:', projects);
   }
-  console.log('[doneSteps] doneSteps within projectUtils.js:', doneSteps);               // why is this only called when box unchecked?
+  console.log('[doneSteps] doneSteps within projectUtils.js:', doneSteps);
 };
 
 export const saveProjects = (updatedProjects) => {  // saves projects to localStorage
   localStorage.setItem('projects', JSON.stringify(updatedProjects));
 };
-
-/**
- * completedSteps - get or update the array of completed steps for a project
- * @param {string} zoneName - the project zone name
- * @param {string} step - the step to add or remove
- * @param {string} action - 'add' | 'remove' | undefined
- * @returns {Array} - the array of completed steps
- */
-export function completedSteps(zoneName, step, action) {
-  // action: 'add' | 'remove' | undefined
-  // load projects from local storage
-  const projects = JSON.parse(localStorage.getItem('projects') || '[]');
-  // find the most recent project with this zoneName
-  const idx = [...projects].reverse().findIndex(
-    project => project.zoneName === zoneName && project.status !== 'completed'
-  );
-  // if found, update the doneSteps array
-  if (idx !== -1) {
-    const realIdx = projects.length - 1 - idx;
-    // get the doneSteps array
-    let doneSteps = projects[realIdx].doneSteps || [];
-    // if step is add, the step is valid, and the step is not already in the array, add it
-    if (action === 'add' && step && !doneSteps.includes(step)) {
-      doneSteps.push(step);
-    } else if (action === 'remove' && step) {
-      // if step is remove, the step is valid, and the step is in the array, remove it
-      doneSteps = doneSteps.filter(s => s !== step);
-    }
-    // update the project in localStorage
-    projects[realIdx].doneSteps = doneSteps;
-    localStorage.setItem('projects', JSON.stringify(projects));
-    return doneSteps;
-  }
-  return [];
-}
 
 
 export const loadProjects = () => {  // loads projects from localStorage

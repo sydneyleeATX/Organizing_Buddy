@@ -22,6 +22,8 @@ import { loadProjects, saveProjects as saveProjectsToStorage, updateProjectStep,
  * Main component for displaying progress projects
  * @returns {JSX.Element} The progress projects page component
  */
+import { useDoneSteps } from '../components/DoneStepsContext';
+
 export default function ProgressProjects() {
   const [projects, setProjects] = useState([]);
   // controls whether notes popup is visible
@@ -31,6 +33,8 @@ export default function ProgressProjects() {
   // stores the ID of the project being edited
   const [notesProjectId, setNotesProjectId] = useState(null);
   const router = useRouter();
+  // get the removeZoneSteps function from the DoneStepsContext
+  const { removeZoneSteps } = useDoneSteps();
 
   useEffect(() => {
     const projects = loadProjects();
@@ -45,9 +49,18 @@ export default function ProgressProjects() {
     setProjects(updatedProjects);
   };
 
+ 
+
   const handleDelete = (projectId) => {
     const confirm = window.confirm("Are you sure you want to delete this project?");
     if (!confirm) return;
+
+    // Find the zoneName for the project being deleted
+    const projectToDelete = projects.find(project => project.id === projectId);
+    if (projectToDelete) {
+      // remove the project's steps from the DoneStepsContext by calling removeZoneSteps and passing in the project's zoneName
+      removeZoneSteps(projectToDelete.zoneName);
+    }
 
     // Delete the project directly from localStorage
     deleteProject(projectId);
@@ -56,6 +69,7 @@ export default function ProgressProjects() {
     const updatedProjects = projects.filter(project => project.id !== projectId);
     setProjects(updatedProjects);
   };
+
 
 
 
@@ -74,6 +88,7 @@ export default function ProgressProjects() {
   // Function to format the step name
   const getStepName = (step) => {
     const steps = {
+      'zone': 'Zone',
       'empty': 'Emptying',
       'declutter': 'Decluttering',
       'clean': 'Cleaning',

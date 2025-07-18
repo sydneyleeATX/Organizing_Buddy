@@ -5,6 +5,10 @@ const DoneStepsContext = createContext();
  * DoneStepsProvider - Provides context for managing done steps (completed tasks) for projects.
  * Props:
  *   children: React nodes to render within the provider
+ * useDoneSteps() gives you access to two functions: 
+ * getDoneSteps: to read
+ * setStepChecked(zoneName, step, checked) to change the state (i.e., mark a step as checked/unchecked for a zone).
+ * Internally, setStepChecked will update the context state, and then any component using getDoneSteps will see the new, updated list
  */
 export function DoneStepsProvider({ children }) {
   // Structure: { [zoneName]: [doneSteps] }
@@ -25,6 +29,15 @@ export function DoneStepsProvider({ children }) {
 
   // Get doneSteps for a zone
   const getDoneSteps = (zoneName) => doneStepsByZone[zoneName] || [];
+
+  // Remove all steps for a zone (used when deleting a project)
+  const removeZoneSteps = (zoneName) => {
+    setDoneStepsByZone(prev => {
+      const newObj = { ...prev };
+      delete newObj[zoneName];
+      return newObj;
+    });
+  };
 
   // Add or remove a step for a zone
   const setStepChecked = (zoneName, step, checked) => {
@@ -58,7 +71,7 @@ export function DoneStepsProvider({ children }) {
 
   return (
     // Makes data available to all child components wrapped inside it
-    <DoneStepsContext.Provider value={{ getDoneSteps, setStepChecked }}>
+    <DoneStepsContext.Provider value={{ getDoneSteps, setStepChecked, removeZoneSteps }}>
       {children}
     </DoneStepsContext.Provider>
   );

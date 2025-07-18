@@ -11,7 +11,9 @@ const steps = [
   { label: 'Complete', path: '/complete', instructions: 'Celebrate your organized space!' }
 ];
 
+
 const Timeline = ({ currentStep }) => {
+  // currentStep is the current step in the process
   const router = useRouter();
   const currentIdx = steps.findIndex(
     s => s.label.toLowerCase() === currentStep?.toLowerCase()

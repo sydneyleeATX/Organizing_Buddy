@@ -121,7 +121,7 @@ export default function Declutter() {
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
           {/* Left: Timeline, about 1/3 width on desktop, full on mobile */}
           <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
-            <Timeline currentStep="empty" />
+            <Timeline currentStep="declutter" />
           </div>
           {/* Right: Description */}
 

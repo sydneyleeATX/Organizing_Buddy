@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { loadProjects } from '../utils/projectUtils';
+import { loadProjects, deleteProject } from '../utils/projectUtils';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 
 export default function PastProjects() {
@@ -18,20 +18,27 @@ export default function PastProjects() {
 
   useEffect(() => {
     const allProjects = loadProjects();
-    const completed = allProjects.filter(p => p.status === 'completed');
+    const completed = allProjects.filter(p => p.status === 'Completed');
     setCompletedProjects(completed);
   }, []);
 
   function handleDelete(projectId) {
-    if (!window.confirm('Are you sure you want to delete this project?')) return;
-    // get all stored projects. if none stored return empty array
-    const stored = localStorage.getItem('projects');
-    const projects = stored ? JSON.parse(stored) : [];
-    // get all projects that do not have the same ID as the project we are deleting
-    const updated = projects.filter(p => p.id !== projectId);
-    // update localStorage with the updated array
-    localStorage.setItem('projects', JSON.stringify(updated));
-    setCompletedProjects(prev => prev.filter(p => p.id !== projectId));
+    const confirm = window.confirm("Are you sure you want to delete this project?");
+    if (!confirm) return;
+    
+    // Find the zoneName for the project being deleted
+    const projectToDelete = completedProjects.find(project => project.id === projectId);
+    if (projectToDelete) {
+      // remove the project's steps from the DoneStepsContext by calling removeZoneSteps and passing in the project's zoneName
+          removeZoneSteps(projectToDelete.zoneName);
+        }
+    
+        // Delete the project directly from localStorage
+        deleteProject(projectId);
+        
+        // Update the local state
+        const updatedProjects = completedProjects.filter(project => project.id !== projectId);
+        setCompletedProjects(updatedProjects);
   }
 
   return (

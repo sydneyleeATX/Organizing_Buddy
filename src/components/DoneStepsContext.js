@@ -38,7 +38,7 @@ export function DoneStepsProvider({ children }) {
       return newObj;
     });
   };
-
+  
   // Add or remove a step for a zone
   const setStepChecked = (zoneName, step, checked) => {
     setDoneStepsByZone(prev => {

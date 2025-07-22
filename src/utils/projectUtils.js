@@ -66,16 +66,29 @@ export const loadProjects = () => {  // loads projects from localStorage
 export const deleteProject = (projectId) => {  // deletes project from localStorage
   const stored = localStorage.getItem('projects');
   if (!stored) return;  // if no projects, return
-  
+
   const projects = JSON.parse(stored);
   const index = projects.findIndex(project => project.id === projectId);  // find index of project
   if (index === -1) return;  // if project not found, return
-  
+
+  // Get the zoneName before removing the project
+  const zoneName = projects[index].zoneName;
+
   // Remove the project from the array
   projects.splice(index, 1);
-  
+
   // Save the updated array to localStorage
   localStorage.setItem('projects', JSON.stringify(projects));
+
+  // Remove the done steps for this zoneName
+  const doneStepsRaw = localStorage.getItem('doneStepsByZone');
+  if (doneStepsRaw) {
+    const doneStepsByZone = JSON.parse(doneStepsRaw);
+    if (zoneName && doneStepsByZone[zoneName]) {
+      delete doneStepsByZone[zoneName];
+      localStorage.setItem('doneStepsByZone', JSON.stringify(doneStepsByZone));
+    }
+  }
 };
 
 export function getCurrentProject(zoneName) {

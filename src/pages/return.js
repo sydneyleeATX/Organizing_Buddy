@@ -70,7 +70,12 @@ export default function Return() {
   };
 
   const handleNextStep = () => {
-    updateProjectStep(zoneName, 'complete');
+    // First, ensure zoneName is valid before trying to use it or pass it
+    if (!zoneName || (zoneName === 'your space' && !router.query.zoneName)) {
+      console.error("CRITICAL: handleNextStep in declutter.js - zoneName is missing or default without a query parameter. Aborting step update and navigation.", "Current zoneName:", zoneName, "Full router.query:", router.query);
+      alert("There was an issue identifying your project zone in Declutter. Please go back and try again.");
+      return; 
+    }
     router.push(`/complete?zoneName=${encodeURIComponent(zoneName)}`);
   };
 

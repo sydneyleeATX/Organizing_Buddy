@@ -19,6 +19,7 @@ import styles from '../components/Layout.module.css';
 import BackButton from '../components/BackButton';
 import { loadProjects, saveProjects } from '../utils/projectUtils';
 import CheckBox from '../components/CheckBox';
+import { Checkbox } from '@headlessui/react';
 
 export default function Complete() {
   const router = useRouter();
@@ -32,12 +33,13 @@ export default function Complete() {
 
   return (
     <Layout>
-      <div style={inline_styles.container}>
+      <div style={inlineStyles.container}>
         <CelebrationPage />  {/* CelebrationPage component, use the slash because it is a self-closing HTML tag */}
-        <h1 style={inline_styles.heading}>
-          Project Complete
-        </h1>
-        <p style={inline_styles.description}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+          <CheckBox zoneName={zoneName} markedStep="complete" className={styles.checkbox} />
+          <h1 style={inlineStyles.h1}>Project Complete </h1>
+        </div>
+        <p style={inlineStyles.description}>
           Great job! Your project is complete!
         </p>
       </div>
@@ -48,7 +50,7 @@ export default function Complete() {
 }
 
 // Inline styles for layout and text
-const inline_styles = {
+const inlineStyles = {
   container: {
     height: '100vh',                      // Full screen height
     display: 'flex',                      // Use flexbox layout
@@ -58,7 +60,7 @@ const inline_styles = {
     padding: '2rem',                     // Padding around content
     backgroundColor: '#f0f2f5',          // Light background color
   },
-  heading: {
+  h1s: {
     fontSize: '2rem',                    // Large font size
     color: '#333',                       // Dark text color
     marginBottom: '1rem',                // Space below heading

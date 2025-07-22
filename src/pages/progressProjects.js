@@ -123,7 +123,7 @@ export default function ProgressProjects() {
         <h1 style={inlineStyles.heading}>Ongoing Projects</h1>
         
         {/* filter out projects that are completed */}
-        {projects.filter(p => p.status !== 'completed').length === 0 ? (
+        {projects.filter(p => p.status !== 'Completed').length === 0 ? (
           <p style={inlineStyles.noProjects}>No ongoing projects found. Start a new project from the menu.</p>
         ) : (
           <div style={inlineStyles.projectsList}>

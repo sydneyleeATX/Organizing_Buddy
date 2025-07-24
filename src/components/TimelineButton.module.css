@@ -1,0 +1,88 @@
+/* Timeline Button Styles */
+.timelineButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #b2e0eb;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.timelineButton:hover {
+  background-color: #9dd4e0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Overlay for side panel */
+.sidePanelOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  background: none;
+}
+
+/* Side panel slides out from the left */
+.sidePanel {
+  position: absolute;
+  top: 60px; /* Below the header/nav area */
+  left: 0;
+  background: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.10);
+  border-radius: 0 16px 16px 0; /* Rounded on the right side only */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1rem 0.8rem 1rem 1rem;
+  min-width: 180px;
+  width: fit-content;
+  max-width: 220px;
+  max-height: calc(100vh - 80px);
+  z-index: 2100;
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(.4,0,.2,1);
+  opacity: 1;
+  overflow-y: auto;
+}
+
+.closeSidePanel {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: #888;
+  cursor: pointer;
+  z-index: 2200;
+  padding: 0;
+  line-height: 1;
+}
+
+.closeSidePanel:hover {
+  color: #333;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .sidePanel {
+    min-width: 170px;
+    max-width: 200px;
+    padding: 0.8rem 0.6rem 0.8rem 0.8rem;
+  }
+  
+  .timelineButton {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+}

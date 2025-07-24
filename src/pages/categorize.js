@@ -15,24 +15,21 @@ import { useRouter } from 'next/router';
 import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, regressProjectStep, completedSteps } from '../utils/projectUtils';
+import { useDoneSteps } from '../components/DoneStepsContext';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 import ChatExpert from '../components/ChatExpert';
-import Timeline from '../components/Timeline';
-import ForwardButton from '../components/ForwardButton';
-import CheckBox from '../components/CheckBox';
 import FabButton from '../components/FabButton';
 
 export default function Categorize() {
   const router = useRouter();
-  const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
+  const { zoneName } = router.query;
+  const { setStepChecked } = useDoneSteps();
   const [notesOpen, setNotesOpen] = useState(false);
   const [notes, setNotes] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
   console.log('Categorize component rendering. zoneName from query:', zoneName, 'Full query:', router.query);
-
-
 
   // Messages for the encouragement popup
   const categorizeMessages = [
@@ -50,19 +47,13 @@ export default function Categorize() {
 
   const handleNextStep = () => {
     console.log('handleNextStep called. Current zoneName:', zoneName, "Router query:", router.query);
-    if (!zoneName || (zoneName === 'your space' && !router.query.zoneName)) {
+    if (!zoneName || zoneName === 'default') {
         console.error("CRITICAL: handleNextStep in categorize.js - zoneName is missing or default without a query parameter. Aborting step update and navigation.", "Current zoneName:", zoneName, "Full router.query:", router.query);
-        alert("There was an issue identifying your project zone. Please go back and try again.");
-        return; 
+        return;
     }
-    try {
-        updateProjectStep(zoneName, 'return');
-        console.log(`Updated project step to 'return' for zone: ${zoneName}. Navigating...`);
-        router.push(`/return?zoneName=${encodeURIComponent(zoneName)}`);
-    } catch (error) {
-        console.error("Error during updateProjectStep or navigation in categorize.js:", error, "ZoneName:", zoneName);
-        alert("An error occurred while saving your progress. Please try again.");
-    }
+    // Add current step to done steps before navigating
+    setStepChecked(zoneName, 'categorize', true);
+    router.push(`/return?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
   // Empty FAB actions for this page
@@ -92,47 +83,38 @@ export default function Categorize() {
 
   // Back button handler: update most recent project step to 'clean' and go to clean page
   const handleBack = () => {
+    // Remove current step from done steps before navigating back
+    setStepChecked(zoneName, 'categorize', false);
+    setStepChecked(zoneName, 'clean', false)
     router.push(`/clean?zoneName=${encodeURIComponent(zoneName)}`);
   };
-  // forward arrow 
-  const handleForward = () => {
-    router.push(`/return?zoneName=${encodeURIComponent(zoneName)}`);
-  };
+
 
   return (
-    <Layout>
+    <Layout showTimeline={true} currentStep="categorize">
       <BackButton onClick={handleBack} ariaLabel="Back to clean" />
       <div className={styles['bottom-button-container']}>
-        <ForwardButton 
-          onClick={handleForward} 
-          ariaLabel="Forward to declutter" 
-          style={{ position: 'static', right: 'unset', bottom: 'unset' }} 
-        />
         <FabButton actions={fabActions} />
       </div>
       <div style={inlineStyles.container}>
         {/* Container for heading and checkbox alignment*/}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} markedStep="categorize" className={styles.checkbox} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
           <h1 style={inlineStyles.h1}>Categorize</h1>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
-          {/* Left: Timeline, about 1/3 width on desktop, full on mobile */}
-          <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
-            <Timeline currentStep="categorize" />
-          </div>
-          {/* Right: Description */}
-          <div style={{ flex: '2 1 66%', minWidth: 0, maxWidth: 320, width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
+          {/* Description */}
+          <div style={{ minWidth: 0, maxWidth: 400, width: '100%' }}>
             <p style={{ fontSize: '1.2rem', margin: 0, textAlign: 'left', lineHeight: 1.5, color: '#333', wordBreak: 'break-word' }}>
               Now group your 'KEEP' items. Pens with pens, spices with spices, etc.
             </p>
-            {/* EncouragementPopup and Next button */}
-            <EncouragementPopup messages={categorizeMessages} />
-            <button className={styles.button} onClick={handleNextStep} style={{ marginTop: '1.2rem' }}>
-              The items are categorized!
-            </button>
           </div>
         </div>
+        
+        {/* EncouragementPopup and Centered button outside the constrained div */}
+        <EncouragementPopup messages={categorizeMessages} />
+        <button className={styles.button} onClick={handleNextStep} style={{ marginTop: '1.2rem' }}>
+          The items are categorized!
+        </button>
       </div>
       <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
       <ProjectNotesModal

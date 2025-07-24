@@ -19,7 +19,8 @@ import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep, completedSteps } from '../utils/projectUtils';
 import SpaceSuggestions from '../components/SpaceSuggestions';
-import CheckBox from '../components/CheckBox';
+import { useDoneSteps } from '../components/DoneStepsContext';
+
 import FabButton from '../components/FabButton';
 
 // Inline styles
@@ -74,8 +75,7 @@ const inlineStyles = {
 export default function Zone() {
   // Initialize Next.js router for navigation
   const router = useRouter();
-
- 
+  const { setStepChecked } = useDoneSteps();
 
   // State variables to track user input and confirmation status
   // User's input for their zone name
@@ -197,6 +197,7 @@ export default function Zone() {
   }, [confirmedZoneName, confirmedZonePhoto, skipPhoto, zoneName, projectCreated, isResumingProject]);
 
   const handleZoneConfirm = () => {
+    setStepChecked(zoneName, 'zone', true);
     router.push(`/empty?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
@@ -269,10 +270,9 @@ export default function Zone() {
         {/* If zone name is confirmed and photo is uploaded, show the "Let's Go!" button */}
         {confirmedZoneName && (confirmedZonePhoto || skipPhoto) && (
           <>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-            <CheckBox zoneName={zoneName} markedStep="zone" className={styles.checkbox} />
-              <h1 style={inlineStyles.h1}>Define your Zone</h1>
-            </div>
+           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+               <h1 style={inlineStyles.h1}>Define your Zone</h1>
+             </div>
             <p style={inlineStyles.p}>
               Great, we are organizing your {zoneName}!
             </p>

@@ -5,19 +5,19 @@ import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import { updateProjectStep, getCurrentProject, regressProjectStep, completedSteps } from '../utils/projectUtils';
+import { useDoneSteps } from '../components/DoneStepsContext';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 import ChatExpert from '../components/ChatExpert';
-import Timeline from '../components/Timeline';
-import ForwardButton from '../components/ForwardButton';
 import FabButton from '../components/FabButton';
-import CheckBox from '../components/CheckBox';
+
 
 
 // Menu component with navigation buttons
 export default function Empty() {
   const router = useRouter();  // Initialize the router instance
-  const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
+  const { zoneName } = router.query;
+  const { setStepChecked } = useDoneSteps();
   const [notesOpen, setNotesOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [notes, setNotes] = useState('');
@@ -81,9 +81,9 @@ const inlineStyles = {
     if (!zoneName || (zoneName === 'your space' && !router.query.zoneName)) {
       console.error("CRITICAL: handleNextStep in empty.js - zoneName is missing or default without a query parameter. Aborting.", "Current zoneName:", zoneName, "Full router.query:", router.query);
       alert("Project zone not identified in Empty. Please go back and select a project/zone.");
-      return; 
+      return;
     }
-  
+    setStepChecked(zoneName, 'empty', true);
     router.push(`/declutter?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
@@ -97,40 +97,28 @@ const inlineStyles = {
       projects.pop(); // Remove the most recent project
       saveProjects(projects);
     }
+    setStepChecked(zoneName, 'empty', false);
+    setStepChecked(zoneName, 'zone', false);
     router.push('/zone');
-  };
-  // forward button handler
-  const handleForward = () => {
-    router.push('/declutter');
   };
 
   return (
-    <Layout>
+    <Layout showTimeline={true} currentStep="empty">
       <BackButton onClick={handleBack} ariaLabel="Back to zone" />
       <div className={styles['bottom-button-container']}>
-        <ForwardButton 
-          onClick={handleForward} 
-          ariaLabel="Forward to declutter" 
-          style={{ position: 'static', right: 'unset', bottom: 'unset' }} 
-        />
         <FabButton actions={fabActions} />
       </div>
       {/*Top heading*/}
       <div style={inlineStyles.container}>
-        {/* container used for checkbox and heading alignment */}
+        {/* container used for heading alignment */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} markedStep="empty" className={styles.checkbox} />
           <h1 style={inlineStyles.h1}>Empty</h1>
         </div>
         
         {/*Description*/}
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
-          {/* Left: Timeline, about 1/3 width on desktop, full on mobile */}
-          <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
-            <Timeline currentStep="empty" />
-          </div>
-          {/* Right: Description */}
-          <div style={{ flex: '2 1 66%', minWidth: 0, maxWidth: 320, width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
+          {/* Description */}
+          <div style={{ minWidth: 0, maxWidth: 400, width: '100%' }}>
             <p style={{ fontSize: '1.2rem', margin: 0, textAlign: 'left', lineHeight: 1.5, color: '#333', wordBreak: 'break-word' }}>
               Take everything out of your zone. Put it on a clear surface nearby.
             </p>

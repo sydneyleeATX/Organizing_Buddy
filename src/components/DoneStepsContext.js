@@ -12,14 +12,19 @@ const DoneStepsContext = createContext();
  */
 export function DoneStepsProvider({ children }) {
   // Structure: { [zoneName]: [doneSteps] }
-  const [doneStepsByZone, setDoneStepsByZone] = useState(() => {
-    // the window object cannot be run on the server (backend), only browser
+  const [doneStepsByZone, setDoneStepsByZone] = useState({});
+  const [isClient, setIsClient] = useState(false);
+
+  // Load from localStorage only after component mounts on client
+  useEffect(() => {
+    setIsClient(true);
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('doneStepsByZone');
-      return stored ? JSON.parse(stored) : {};
+      if (stored) {
+        setDoneStepsByZone(JSON.parse(stored));
+      }
     }
-    return {};
-  });
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -41,6 +46,7 @@ export function DoneStepsProvider({ children }) {
   
   // Add or remove a step for a zone
   const setStepChecked = (zoneName, step, checked) => {
+    console.log('setStepChecked called with zoneName:', zoneName, 'step:', step, 'checked:', checked)
     setDoneStepsByZone(prev => {
       // look up the current completed steps for this zone
       const current = prev[zoneName] || [];

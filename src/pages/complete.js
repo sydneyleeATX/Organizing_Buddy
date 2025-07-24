@@ -18,16 +18,17 @@ import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import BackButton from '../components/BackButton';
 import { loadProjects, saveProjects } from '../utils/projectUtils';
-import CheckBox from '../components/CheckBox';
-import { Checkbox } from '@headlessui/react';
+import { useDoneSteps } from '../components/DoneStepsContext';
 
 export default function Complete() {
   const router = useRouter();
   const zoneName = router.query.zoneName || 'your space'; // Get zoneName from query or use default (your space)
+  const { setStepChecked } = useDoneSteps();
   
   // Move back a step
   const handleBack = () => {
-
+    setStepChecked(zoneName, 'complete', false);
+    setStepChecked(zoneName, 'return', false)
     router.push(`/return?zoneName=${encodeURIComponent(zoneName)}`);
   };
 

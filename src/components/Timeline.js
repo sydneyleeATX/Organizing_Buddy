@@ -21,22 +21,29 @@ const Timeline = ({ currentStep }) => {
 
   return (
     <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start' }}>
-      {/* Timeline dots only, left-aligned, compact */}
+      {/* Timeline with dots and labels */}
       <div style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        marginLeft: '8px', // small margin from left edge
-        marginRight: '12px',
+        alignItems: 'flex-start',
+        marginLeft: '8px',
         paddingTop: '16px',
         paddingBottom: '16px',
         height: 'auto',
-        maxHeight: '340px', // compact, not full screen
+        maxHeight: '340px',
         justifyContent: 'center',
         position: 'relative',
       }}>
         {steps.map((step, idx) => (
-          <div key={step.label} style={{ height: 38, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div key={step.label} style={{ 
+            height: 38, 
+            position: 'relative', 
+            display: 'flex', 
+            flexDirection: 'row', 
+            alignItems: 'center',
+            width: '100%'
+          }}>
+            {/* Dot button */}
             <button
               aria-label={`Go to ${step.label}`}
               onClick={() => router.push(step.path)}
@@ -55,6 +62,7 @@ const Timeline = ({ currentStep }) => {
                 boxShadow: idx === currentIdx ? '0 0 0 2px #b2e0eb' : 'none',
                 margin: 0,
                 padding: 0,
+                flexShrink: 0,
               }}
             >
               <div style={{
@@ -65,6 +73,22 @@ const Timeline = ({ currentStep }) => {
                 transition: 'background 0.2s',
               }} />
             </button>
+            
+            {/* Step label */}
+            <span 
+              onClick={() => router.push(step.path)}
+              style={{
+                marginLeft: '12px',
+                fontSize: '14px',
+                color: '#333',
+                cursor: 'pointer',
+                fontWeight: idx === currentIdx ? 'bold' : 'normal',
+                transition: 'font-weight 0.2s',
+              }}
+            >
+              {step.label}
+            </span>
+            
             {/* Vertical line except for last dot */}
             {idx < steps.length - 1 && (
               <div style={{
@@ -80,7 +104,6 @@ const Timeline = ({ currentStep }) => {
           </div>
         ))}
       </div>
-      {/* The rest of the page content should go here, not in Timeline */}
     </div>
   );
 };

@@ -17,23 +17,22 @@ import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import ImageUploader from '../components/ImageUpload';
-import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, regressProjectStep, completedSteps } from '../utils/projectUtils';
+import { useDoneSteps } from '../components/DoneStepsContext';
 import ProductSuggestions from '../components/ProductSuggestions';
 import fabStyles from '../components/FabButton.module.css';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 import ChatExpert from '../components/ChatExpert';
 import StorageTips from '../components/StorageTips';
-import Timeline from '../components/Timeline';
-import ForwardButton from '../components/ForwardButton';
-import CheckBox from '../components/CheckBox';
 import FabButton from '../components/FabButton';
 
 
 export default function Return() {
-  const router = useRouter();
-  const zoneName = router.query.zoneName || 'your space';
   // State variables
+  const router = useRouter();
+  const { zoneName } = router.query;
+  const { setStepChecked } = useDoneSteps();
   const [itemsReturned, setItemsReturned] = useState('');
   const [confirmedItemsReturned, setConfirmedItemsReturned] = useState(false);
   const [confirmedPhotoUploaded, setConfirmedPhotoUploaded] = useState(false);
@@ -70,12 +69,12 @@ export default function Return() {
   };
 
   const handleNextStep = () => {
-    // First, ensure zoneName is valid before trying to use it or pass it
-    if (!zoneName || (zoneName === 'your space' && !router.query.zoneName)) {
-      console.error("CRITICAL: handleNextStep in declutter.js - zoneName is missing or default without a query parameter. Aborting step update and navigation.", "Current zoneName:", zoneName, "Full router.query:", router.query);
-      alert("There was an issue identifying your project zone in Declutter. Please go back and try again.");
-      return; 
+    // Update the most recent project step to 'complete' and go to complete page
+    if (!zoneNameFull || zoneNameFull === 'default') {
+      console.error("CRITICAL: handleNextStep in declutter.js - zoneName is missing or default without a query parameter. Aborting step update and navigation.", "Current zoneName:", zoneNameFull, "Full router.query:", router.query);
+      return;
     }
+    setStepChecked(zoneName, 'return', true);
     router.push(`/complete?zoneName=${encodeURIComponent(zoneName)}`);
   };
 
@@ -172,22 +171,17 @@ export default function Return() {
 
   // Back button handler: update most recent project step to 'categorize' and go to categorize page
   const handleBack = () => {
+    // Remove current step from done steps before navigating back
+    setStepChecked(zoneName, 'return', false);
+    setStepChecked(zoneName, 'categorize', false)
     router.push(`/categorize?zoneName=${encodeURIComponent(zoneName)}`);
   };
-  // forward arrow 
-  const handleForward = () => {
-    router.push(`/complete?zoneName=${encodeURIComponent(zoneName)}`);
-  };
+
 
   return (
-    <Layout fabActions={fabActions}>
+    <Layout fabActions={fabActions} showTimeline={true} currentStep="return">
       <BackButton onClick={handleBack} ariaLabel="Back to categorize" />
       <div className={styles['bottom-button-container']}>
-        <ForwardButton 
-          onClick={handleForward} 
-          ariaLabel="Forward to declutter" 
-          style={{ position: 'static', right: 'unset', bottom: 'unset' }} 
-        />
         <FabButton actions={fabActions} />
       </div>
       <ProjectNotesModal
@@ -200,21 +194,16 @@ export default function Return() {
       <StorageTips open={storageTipsOpen} onClose={() => setStorageTipsOpen(false)} />
       <div style={inlineStyles.container}>
         {/* Container for heading and checkbox alignment*/}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} markedStep="return" className={styles.checkbox} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
           <h1 style={inlineStyles.h1}>Return Items</h1>
         </div>
 
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={returnMessages} />
 
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem', width: '100%' }}>
-          {/* Left: Timeline */}
-          <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
-            <Timeline currentStep="return" />
-          </div>
-          {/* Right: Description or Photo Upload */}
-          <div style={{ flex: '2 1 66%', minWidth: 0, maxWidth: 320, width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem', width: '100%' }}>
+          {/* Description or Photo Upload */}
+          <div style={{ minWidth: 0, maxWidth: 400, width: '100%' }}>
             {!confirmedItemsReturned ? (
               <>
                 <p style={inlineStyles.description}>
@@ -224,9 +213,6 @@ export default function Return() {
                   <li>Easy access: What do you use most often?</li>
                   <li>Vertical space: Can you stack items or use risers?</li>
                 </ul>
-                <button className={styles.button} onClick={handleConfirmItemsReturned}>
-                  All items are returned!
-                </button>
               </>
             ) : (
               <>
@@ -241,6 +227,13 @@ export default function Return() {
             )}
           </div>
         </div>
+
+        {/* Centered button outside the constrained div */}
+        {!confirmedItemsReturned && (
+          <button className={styles.button} onClick={handleConfirmItemsReturned}>
+            All items are returned!
+          </button>
+        )}
 
         {/* When skipPhoto is set to true, automatically call handleNextStep to proceed. 
         If you want to perform logic that causes side effects (such as navigation, updating state, fetching data => use useEffect) */}

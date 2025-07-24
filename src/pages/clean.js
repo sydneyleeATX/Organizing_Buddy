@@ -16,12 +16,13 @@ import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import { updateProjectStep, getCurrentProject, regressProjectStep, completedSteps } from '../utils/projectUtils';
+import { useDoneSteps } from '../components/DoneStepsContext';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
 import ChatExpert from '../components/ChatExpert';
-import Timeline from '../components/Timeline';
-import ForwardButton from '../components/ForwardButton'
-import CheckBox from '../components/CheckBox';
+
+
+
 import FabButton from '../components/FabButton';
 
 
@@ -29,15 +30,16 @@ import FabButton from '../components/FabButton';
 
 export default function Clean() {
   const router = useRouter();
-  const zoneName = router.query.zoneName || 'your space';
+  const { zoneName } = router.query;
   const [notesOpen, setNotesOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [notes, setNotes] = useState('');
+  const { setStepChecked } = useDoneSteps();
 
   const handleNextStep = () => {
     updateProjectStep(zoneName, 'categorize');
     const navigationPath = `/categorize?zoneName=${encodeURIComponent(zoneName)}`;
-    console.log('[clean.js] Navigating with zoneName:', zoneName, 'Attempting to push to path:', navigationPath);
+    setStepChecked(zoneName, 'clean', true);
     router.push(navigationPath);
   };
 
@@ -80,21 +82,16 @@ export default function Clean() {
 
   // Back button handler: update most recent project step to 'declutter' and go to declutter page
   const handleBack = () => {
+    setStepChecked(zoneName, 'clean', false);
+    setStepChecked(zoneName, 'declutter', false)
     router.push(`/declutter?zoneName=${encodeURIComponent(zoneName)}`);
   };
-  const handleForward = () => {
-    router.push(`/categorize?zoneName=${encodeURIComponent(zoneName)}`);
-  };
+ 
 
   return (
-    <Layout>
+    <Layout showTimeline={true} currentStep="clean">
       <BackButton onClick={handleBack} ariaLabel="Back to declutter" />
       <div className={styles['bottom-button-container']}>
-        <ForwardButton 
-          onClick={handleForward} 
-          ariaLabel="Forward to declutter" 
-          style={{ position: 'static', right: 'unset', bottom: 'unset' }} 
-        />
         <FabButton actions={fabActions} />
       </div>
       <div style={inlineStyles.container}>
@@ -106,25 +103,22 @@ export default function Clean() {
         />
         {/* Container for heading and checkbox alignment*/}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} markedStep="clean" className={styles.checkbox} />
           <h1 style={inlineStyles.h1}>Clean the Space</h1>
         </div>
         {/*Description*/}
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
-          {/* Left: Timeline, about 1/3 width on desktop, full on mobile */}
-          <div style={{ flex: '1 1 33%', maxWidth: 120, minWidth: 60 }}>
-            <Timeline currentStep="clean" />
-          </div>
-          {/* Right: Description */}
-          <div style={{ flex: '2 1 66%', minWidth: 0, maxWidth: 320, width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
+          {/* Description */}
+          <div style={{ minWidth: 0, maxWidth: 400, width: '100%' }}>
             <p style={{ fontSize: '1.2rem', margin: 0, textAlign: 'left', lineHeight: 1.5, color: '#333', wordBreak: 'break-word' }}>
               Now that it's empty, give your {zoneName} a quick wipe down. Get rid of dust, crumbs, etc
             </p>
-            <button className={styles.button} onClick={handleNextStep}>
-              I'm ready to categorize
-            </button>
           </div>
         </div>
+        
+        {/* Centered button outside the constrained div */}
+        <button className={styles.button} onClick={handleNextStep}>
+          I'm ready to categorize
+        </button>
         <ChatExpert open={chatOpen} onClose={() => setChatOpen(false)} />
         {/* Calling EncouragementPopup component and passing messages array as argument */}
         <EncouragementPopup messages={cleanMessages} />

@@ -20,6 +20,8 @@ import styles from '../components/Layout.module.css';
 import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep, completedSteps } from '../utils/projectUtils';
 import SpaceSuggestions from '../components/SpaceSuggestions';
 import { useDoneSteps } from '../components/DoneStepsContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBoxOpen, faTrash, faSprayCanSparkles, faTags, faArrowRotateLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 import FabButton from '../components/FabButton';
 
@@ -276,6 +278,35 @@ export default function Zone() {
             <p style={inlineStyles.p}>
               Great, we are organizing your {zoneName}!
             </p>
+            <div style={{ marginBottom: '2rem', textAlign: 'left', maxWidth: '350px' }}>
+              <p style={{ ...inlineStyles.p, marginBottom: '1rem', fontWeight: 'bold' }}>Here's what we'll do:</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                  <FontAwesomeIcon icon={faBoxOpen} style={{ color: '#000', width: '16px' }} />
+                  <span style={{ fontSize: '1rem', color: '#333' }}><strong>Empty:</strong> Remove everything from your space</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                  <FontAwesomeIcon icon={faTrash} style={{ color: '#000', width: '16px' }} />
+                  <span style={{ fontSize: '1rem', color: '#333' }}><strong>Declutter:</strong> Sort items into keep, toss, or relocate</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                  <FontAwesomeIcon icon={faSprayCanSparkles} style={{ color: '#000', width: '16px' }} />
+                  <span style={{ fontSize: '1rem', color: '#333' }}><strong>Clean:</strong> Wipe down and refresh your space</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                  <FontAwesomeIcon icon={faTags} style={{ color: '#000', width: '16px' }} />
+                  <span style={{ fontSize: '1rem', color: '#333' }}><strong>Categorize:</strong> Group similar items together</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                  <FontAwesomeIcon icon={faArrowRotateLeft} style={{ color: '#000', width: '16px' }} />
+                  <span style={{ fontSize: '1rem', color: '#333' }}><strong>Return:</strong> Put everything back in its place</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                  <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#000', width: '16px' }} />
+                  <span style={{ fontSize: '1rem', color: '#333' }}><strong>Complete:</strong> Celebrate your organized space!</span>
+                </div>
+              </div>
+            </div>
             {/* Button to proceed to the next step (empty.js) */}
             <button className={styles.button} onClick={() => handleZoneConfirm(zoneName)}>
               Let's Go!

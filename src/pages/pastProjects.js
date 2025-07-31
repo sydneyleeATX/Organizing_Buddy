@@ -8,6 +8,7 @@ import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import { loadProjects, deleteProject } from '../utils/projectUtils';
 import ProjectNotesModal from '../components/ProjectNotesModal';
+import { useDoneSteps } from '../components/DoneStepsContext';
 
 export default function PastProjects() {
   const [completedProjects, setCompletedProjects] = useState([]);
@@ -15,6 +16,8 @@ export default function PastProjects() {
   const [notes, setNotes] = useState('');
   const [notesProjectId, setNotesProjectId] = useState(null);
   const router = useRouter();
+  // Need to access removeZoneSteps through the context because it needs access to component state. Cannot export directly
+  const { removeZoneSteps } = useDoneSteps();
 
   useEffect(() => {
     const allProjects = loadProjects();

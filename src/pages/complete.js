@@ -37,7 +37,6 @@ export default function Complete() {
       <div style={inlineStyles.container}>
         <CelebrationPage />  {/* CelebrationPage component, use the slash because it is a self-closing HTML tag */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-          <CheckBox zoneName={zoneName} markedStep="complete" className={styles.checkbox} />
           <h1 style={inlineStyles.h1}>Project Complete </h1>
         </div>
         <p style={inlineStyles.description}>

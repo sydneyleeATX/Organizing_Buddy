@@ -70,8 +70,8 @@ export default function Return() {
 
   const handleNextStep = () => {
     // Update the most recent project step to 'complete' and go to complete page
-    if (!zoneNameFull || zoneNameFull === 'default') {
-      console.error("CRITICAL: handleNextStep in declutter.js - zoneName is missing or default without a query parameter. Aborting step update and navigation.", "Current zoneName:", zoneNameFull, "Full router.query:", router.query);
+    if (!zoneName || zoneName === 'default') {
+      console.error("CRITICAL: handleNextStep in declutter.js - zoneName is missing or default without a query parameter. Aborting step update and navigation.", "Current zoneName:", zoneName, "Full router.query:", router.query);
       return;
     }
     setStepChecked(zoneName, 'return', true);

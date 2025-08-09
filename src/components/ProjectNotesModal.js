@@ -18,8 +18,10 @@ const modalStyles = {
     backgroundColor: 'rgba(0,0,0,0.4)',
     zIndex: 2000,
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start', // Position modal higher on screen
     justifyContent: 'center',
+    paddingTop: '10vh', // Position modal higher on screen
+    overflowY: 'auto' // Allow scrolling if needed
   },
   modal: {
     background: '#fff',
@@ -27,11 +29,13 @@ const modalStyles = {
     padding: '2rem',
     width: '90%',
     maxWidth: '400px',
+    maxHeight: '80vh', // Limit height to prevent keyboard overlap
     boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
     display: 'flex',
     flexDirection: 'column',
     gap: '1.25rem',
     position: 'relative',
+    marginBottom: '20vh' // Extra space at bottom for keyboard
   },
   textarea: {
     minHeight: '120px',
@@ -75,6 +79,37 @@ const ProjectNotesModal = ({ open, initialNotes, zoneName, onClose, onSave }) =>
     setNotes(initialNotes || '');
   }, [initialNotes, open]);
 
+  // Handle mobile keyboard visibility
+  useEffect(() => {
+    if (open) {
+      // Prevent the page behind modal from scrolling
+      document.body.style.overflow = 'hidden';
+      
+      // On mobile, adjust viewport when keyboard appears
+      const handleResize = () => {
+        // Only run if browser supports visualViewport API
+        if (window.visualViewport) {
+          const viewport = window.visualViewport;
+          document.documentElement.style.setProperty('--viewport-height', `${viewport.height}px`);
+        }
+      };
+      
+      if (window.visualViewport) {
+        // Event listener that resizes modal when keyboard appears
+        window.visualViewport.addEventListener('resize', handleResize);
+        handleResize(); // Initial call
+      }
+
+      // Cleanup code when modal closes
+      return () => {
+        document.body.style.overflow = 'unset';
+        if (window.visualViewport) {
+          window.visualViewport.removeEventListener('resize', handleResize);
+        }
+      };
+    }
+  }, [open]);
+
   if (!open) return null;
 
   return (
@@ -93,6 +128,7 @@ const ProjectNotesModal = ({ open, initialNotes, zoneName, onClose, onSave }) =>
         const projects = loadProjects();
         const idx = projects.findIndex(p => p.zoneName === zoneName);
         if (idx !== -1) {
+          // Update existing project
           projects[idx].notes = notes;
           saveProjects(projects);
         }

@@ -143,7 +143,9 @@ const inlineStyles = {
   heading: {
     fontSize: '2rem',
     marginBottom: '2rem',
-    textAlign: 'center'
+    textAlign: 'center',
+    paddingLeft: '60px', // Add left padding to prevent menu button overlap on mobile
+    paddingRight: '60px' // Add right padding for visual balance
   },
   noProjects: {
     fontSize: '1.2rem',

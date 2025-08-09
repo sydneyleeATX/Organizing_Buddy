@@ -25,6 +25,37 @@ export default function ChatExpert({ open, onClose }) {
     }
   }, [messages, open]);
 
+  // Handle mobile keyboard visibility
+  useEffect(() => {
+    if (open) {
+      // Prevent the page behind modal from scrolling
+      document.body.style.overflow = 'hidden';
+      
+      // On mobile, adjust viewport when keyboard appears
+      const handleResize = () => {
+        // Only run if browser supports visualViewport API
+        if (window.visualViewport) {
+          const viewport = window.visualViewport;
+          document.documentElement.style.setProperty('--viewport-height', `${viewport.height}px`);
+        }
+      };
+      
+      if (window.visualViewport) {
+        // Event listener that resizes modal when keyboard appears
+        window.visualViewport.addEventListener('resize', handleResize);
+        handleResize(); // Initial call
+      }
+
+      // Cleanup code when modal closes
+      return () => {
+        document.body.style.overflow = 'unset';
+        if (window.visualViewport) {
+          window.visualViewport.removeEventListener('resize', handleResize);
+        }
+      };
+    }
+  }, [open]);
+
   if (!open) return null;
 
   const handleSend = async (e) => {
@@ -90,10 +121,16 @@ export default function ChatExpert({ open, onClose }) {
 const inlineStyles = {
   overlay: {
     position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-    background: 'rgba(0,0,0,0.2)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center'
+    background: 'rgba(0,0,0,0.2)', zIndex: 3000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+    paddingTop: '10vh', // Position modal higher on screen
+    overflowY: 'auto' // Allow scrolling if needed
   },
   window: {
-    background: '#fff', borderRadius: 12, width: 350, maxWidth: '90vw', minHeight: 380, boxShadow: '0 4px 24px rgba(0,0,0,0.18)', display: 'flex', flexDirection: 'column', position: 'relative', padding: '1.5rem 1rem 1rem 1rem'
+    background: '#fff', borderRadius: 12, width: 350, maxWidth: '90vw', 
+    minHeight: 380, maxHeight: '80vh', // Limit height to prevent keyboard overlap
+    boxShadow: '0 4px 24px rgba(0,0,0,0.18)', display: 'flex', flexDirection: 'column', 
+    position: 'relative', padding: '1.5rem 1rem 1rem 1rem',
+    marginBottom: '20vh' // Extra space at bottom for keyboard
   },
   closeBtn: {
     position: 'absolute', top: 10, right: 16, background: 'none', border: 'none', fontSize: '1.5rem', color: '#888', cursor: 'pointer'
@@ -102,7 +139,8 @@ const inlineStyles = {
     margin: 0, marginBottom: 12, fontSize: '1.2rem', color: '#007bff', fontWeight: 600
   },
   messages: {
-    flex: 1, overflowY: 'auto', marginBottom: 10, padding: '0.5rem', background: '#f6f6f9', borderRadius: 8
+    flex: 1, overflowY: 'auto', marginBottom: 10, padding: '0.5rem', background: '#f6f6f9', borderRadius: 8,
+    maxHeight: '50vh' // Ensure messages area doesn't get too tall on mobile
   },
   userMsg: {
     alignSelf: 'flex-end', background: '#e0f7fa', color: '#007bff', padding: '0.5rem 0.75rem', borderRadius: 8, margin: '0.25rem 0', maxWidth: '80%'

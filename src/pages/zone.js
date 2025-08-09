@@ -17,7 +17,7 @@ import { useRouter } from 'next/router';
 import ImageUploader from '../components/ImageUpload';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, regressProjectStep, completedSteps } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, loadProjects, saveProjects, completedSteps } from '../utils/projectUtils';
 import SpaceSuggestions from '../components/SpaceSuggestions';
 import { useDoneSteps } from '../components/DoneStepsContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

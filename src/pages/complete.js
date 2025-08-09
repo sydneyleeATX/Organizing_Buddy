@@ -13,7 +13,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import CelebrationPage from '../components/Confetti';
-import { updateProjectStep, regressProjectStep } from '../utils/projectUtils';
+import { updateProjectStep} from '../utils/projectUtils';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import BackButton from '../components/BackButton';

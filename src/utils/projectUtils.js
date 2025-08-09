@@ -37,7 +37,7 @@ export const updateProjectStep = (zoneName, doneStepsInput) => {  // updates the
 
   // Only update the most recent in-progress project with this zoneName
   const idx = [...projects].reverse().findIndex(
-    project => project.zoneName === zoneName && project.status !== 'completed'
+    project => project.zoneName === zoneName && project.status !== 'Completed'
   );
   if (idx !== -1) {
     const realIdx = projects.length - 1 - idx;
@@ -96,22 +96,6 @@ export function getCurrentProject(zoneName) {
   return projects.find(p => p.zoneName === zoneName);
 }
 
-export function regressProjectStep(zoneName) {
-  const projects = loadProjects();
-  const idx = [...projects].reverse().findIndex(
-    project => project.zoneName === zoneName && project.status !== 'completed'
-  );
-  if (idx !== -1) {
-    const realIdx = projects.length - 1 - idx;
-    projects[realIdx] = {
-      ...projects[realIdx],
-      currentStep: 'empty',
-      status: 'in-progress',
-      lastUpdated: new Date().toISOString()
-    };
-    saveProjects(projects);
-    console.log('[regressProjectStep] Updated projects array:', projects);
-  }
-}
+
 
 

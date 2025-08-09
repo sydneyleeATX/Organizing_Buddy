@@ -127,44 +127,48 @@ export default function ProgressProjects() {
           <p style={inlineStyles.noProjects}>No ongoing projects found. Start a new project from the menu.</p>
         ) : (
           <div style={inlineStyles.projectsList}>
-            {projects.filter(p => p.status !== 'completed').map((project) => (
+            {projects.filter(p => p.status !== 'Completed').map((project) => (
               <div key={project.id} style={inlineStyles.projectCard}>
                 <div style={inlineStyles.projectHeader}>
                   <h2 style={inlineStyles.projectName}>{project.zoneName}</h2>
                   <span style={{ ...inlineStyles.status, backgroundColor: getStatusColor(project.status) }}>
                     {project.status.replace('-', ' ').toUpperCase()}
                   </span>
-                  {project.startPhoto && (
-  <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-    <img 
-      src={project.startPhoto} 
-      alt={`Before photo of ${project.zoneName}`} 
-      style={{ maxWidth: '100px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
-    />
-    <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>Before photo</div>
-    <button
-      style={{ ...inlineStyles.showNotesButton, marginTop: '0.5rem', width: 'auto' }}
-      onClick={() => {
-        setNotesProjectId(project.id);
-        setNotes(project.notes || '');
-        setNotesOpen(true);
-      }}
-    >
-      Show Notes
-    </button>
-    {project.endPhoto && (
-      <>
-        <img
-          src={project.endPhoto}
-          alt={`After photo of ${project.zoneName}`}
-          style={{ maxWidth: '100px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', marginTop: '0.5rem' }}
-        />
-        <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>After photo</div>
-      </>
-    )}
-  </div>
-)}
                 </div>
+                
+                {/* Show Notes Button - positioned below status bar */}
+                <button
+                  style={inlineStyles.showNotesButton}
+                  onClick={() => {
+                    setNotesProjectId(project.id);
+                    setNotes(project.notes || '');
+                    setNotesOpen(true);
+                  }}
+                >
+                  Show Notes
+                </button>
+                
+                {/* Photos section */}
+                {project.startPhoto && (
+                  <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <img 
+                      src={project.startPhoto} 
+                      alt={`Before photo of ${project.zoneName}`} 
+                      style={{ maxWidth: '100px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                    />
+                    <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>Before photo</div>
+                    {project.endPhoto && (
+                      <>
+                        <img
+                          src={project.endPhoto}
+                          alt={`After photo of ${project.zoneName}`}
+                          style={{ maxWidth: '100px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', marginTop: '0.5rem' }}
+                        />
+                        <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>After photo</div>
+                      </>
+                    )}
+                  </div>
+                )}
                 
                 <div style={inlineStyles.projectDetails}>
                   <p><strong>Started:</strong> {new Date(project.startDate).toLocaleDateString()}</p>
@@ -201,7 +205,9 @@ const inlineStyles = {
   heading: {
     fontSize: '2rem',
     marginBottom: '2rem',
-    textAlign: 'center'
+    textAlign: 'center',
+    paddingLeft: '60px', // Add left padding to prevent menu button overlap on mobile
+    paddingRight: '60px' // Add right padding for visual balance
   },
   noProjects: {
     fontSize: '1.2rem',

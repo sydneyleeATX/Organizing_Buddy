@@ -18,7 +18,7 @@ import ChatExpert from '../components/ChatExpert';
 import DeclutterTips from '../components/DeclutterTips';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
-import { updateProjectStep, getCurrentProject, regressProjectStep, completedSteps } from '../utils/projectUtils';
+import { getCurrentProject } from '../utils/projectUtils';
 import { useDoneSteps } from '../components/DoneStepsContext';
 import BackButton from '../components/BackButton';
 import ProjectNotesModal from '../components/ProjectNotesModal';
@@ -46,7 +46,7 @@ export default function Declutter() {
     {
       label: 'Project Notes',
       onClick: () => {
-        const project = getCurrentProject();
+        const project = getCurrentProject(zoneName);
         setNotes(project && project.notes ? project.notes : '');
         setNotesOpen(true);
       }

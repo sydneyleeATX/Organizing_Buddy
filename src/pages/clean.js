@@ -66,7 +66,7 @@ export default function Clean() {
     {
       label: 'Project Notes',
       onClick: () => {
-        const project = getCurrentProject();
+        const project = getCurrentProject(zoneName);
         setNotes(project && project.notes ? project.notes : '');
         setNotesOpen(true);
       }

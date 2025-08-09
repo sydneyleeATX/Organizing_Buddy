@@ -17,7 +17,7 @@ import EncouragementPopup from '../components/encourage';
 import Layout from '../components/Layout';
 import styles from '../components/Layout.module.css';
 import ImageUploader from '../components/ImageUpload';
-import { updateProjectStep, getCurrentProject, regressProjectStep, completedSteps } from '../utils/projectUtils';
+import { updateProjectStep, getCurrentProject, completedSteps } from '../utils/projectUtils';
 import { useDoneSteps } from '../components/DoneStepsContext';
 import ProductSuggestions from '../components/ProductSuggestions';
 import fabStyles from '../components/FabButton.module.css';
@@ -106,7 +106,7 @@ export default function Return() {
     {
       label: 'Project Notes',
       onClick: () => {
-        const project = getCurrentProject();
+        const project = getCurrentProject(zoneName);
         setNotes(project && project.notes ? project.notes : '');
         setNotesOpen(true);
       }

@@ -1,366 +1,167 @@
 Organizing Buddy Project Documentation
 ==========================================
 
-## Objective
-
-Organizing Buddy is a mobile-first web application that guides users through a structured 7-step home organization process. The app helps users systematically organize any space (kitchen, bedroom, closet, etc.) by providing step-by-step instructions, progress tracking, and helpful tools throughout their organizing journey.
-
-## Order of Implementation
-
+Objective
+Organizing Buddy is a mobile-first web application that guides users through a structured 7-step home organization process. The app helps users systematically organize any space by providing step-by-step instructions, progress tracking, and helpful tools throughout their organizing journey.
+Order of Implementation
 I followed a layered development approach:
 
-1. **Application Skeleton**: Established the basic UI framework and navigation system between the seven organizing pages
-2. **Menu System**: Added functionality for users to view past and current projects, plus a contextual tools menu that adapts to each organizing step
-3. **Progress Tracking System**: Implemented a checkbox and timeline system using React Context to allow users to track their progress and resume projects where they left off 
+Application Skeleton: Established the basic UI framework and navigation system between the seven organizing pages
+Menu System: Added functionality for users to view past and current projects, plus a contextual tools menu that adapts to each organizing step
+Progress Tracking System: Implemented a navigation-based progress tracking system using React Context that automatically tracks user progress as they navigate through steps using the back arrow and center button 
 
-## Core Functionality
+Core Functionality
+Basic UI
+All organizing pages are styled using a Layout CSS module, which contains details for styling the menu button in the top left corner of the application. There are seven organizing steps, each with their own page and logic. Each page contains header HTML text of the page name, instructional text for the user, and navigation controls including back and forward arrows and a center button (often displaying "I'm ready to..." or "Next") to proceed through the workflow. Each organizing page is described in more detail below:
 
-### Basic UI Architecture
-
-All organizing pages share a consistent layout styled with a `Layout` CSS module, which standardizes the menu button positioning in the top left corner and overall page structure. The application follows a linear 7-step workflow, where each step has its own dedicated page with specific logic and components.
-
-### Organizing Pages Overview
-
-Each of the seven organizing steps is described in detail below:
-
-#### Zone Page
-**Purpose**: Project initialization - allows users to name their organizing project and optionally upload a "before" photo
-
-**Page Logic**:
-
-*State Management:*
-- `zoneName`: Stores the user-entered project title
-- `zonePhoto`: Handles initial photo of the space
-- `projectCreated`: Tracks whether this is a new or resumed project
-
-*Project Detection Logic:*
+All organizing pages share a consistent layout styled with a `Layout` CSS module, which standardizes the menu button positioning in the top left corner and overall page structure. The application follows a linear workflow, where each step has its own dedicated page with specific logic and components. Each of the organizing step pages is described in detail below:
+Zone
+Purpose: Project initialization - allows users to name their project and optionally upload a "before" photo
+State Management:
+`zoneName`: Stores the user-entered project title
+`zonePhoto`: Handles initial photo of the space
+`projectCreated`: Tracks whether this is a new or resumed project
+Project Detection Logic:
 A `useEffect` hook monitors `router.isReady` and `router.query` changes to check if a project with the entered `zoneName` already exists in the localStorage projects array. If found, the user is automatically redirected to that project's current step using `useRouter`.
-
-*Project Creation Workflow:*
+Project Creation Workflow:
 Another `useEffect` manages the project creation flow by monitoring `confirmedZoneName`, `confirmedZonePhoto`, `skipPhoto`, and `zoneName` props. When a user submits a project name (`confirmedZoneName` becomes true), they must either upload a photo or skip the upload. Once this requirement is met and `projectCreated` is false, the `createNewProject()` function is called.
+Data Structure:
+The `createNewProject()` function creates and saves a project object to localStorage containing: Project title (zoneName), Start date, Current step, Status ("completed" or "in progress"), Last update timestamp, Notes field
+Components: Tools button, Space suggestions
 
-*Data Structure:*
-The `createNewProject()` function creates and saves a project object to localStorage containing:
-- Project title (zoneName)
-- Start date
-- Current step
-- Status ("completed" or "in progress")
-- Last update timestamp
-- Notes field
-
-**Components**: Tools button, Space suggestions
-
-#### Empty Page
-**Purpose**: Guides users through the initial step of completely clearing their designated space to create a blank canvas for organizing
-
-**Page Logic**:
-
-*State Management:*
-- Inherits `zoneName` from router context to maintain project continuity
-- No additional state variables required as this is primarily an instructional page
-
-*User Workflow:*
-This page serves as the first actionable step in the organizing process. Users receive clear instructions to remove all items from their chosen space, creating an empty area to work with. The page emphasizes the importance of this step for gaining perspective on the space's potential and ensuring thorough cleaning.
-
-*Progress Tracking:*
-Users can mark this step as complete using the integrated checkbox, which updates their project progress through the React Context system.
-
-**Components**: Tools button, Checkbox, Timeline, Project Notes, Ask an Expert
-
-#### Declutter Page
-**Purpose**: Facilitates the decision-making process for determining which items to keep, donate, or discard from the user's collection
-
-**Page Logic**:
-
-*State Management:*
-- Inherits `zoneName` from router context
-- No complex state management required as this page focuses on user education and decision-making
-
-*Visual Organization System:*
-The page implements a three-column flex layout displaying categorization options:
-- **Keep**: Items that serve a current purpose and bring value
-- **Donate**: Items in good condition that others could use
-- **Trash**: Items that are broken, expired, or beyond useful life
-
-Each column includes descriptive text to help users make informed decisions about their belongings.
-
-*Decision Support Tools:*
-Integrated tools help users make difficult decluttering decisions:
-- Keep Quiz: Interactive questionnaire to guide keep/donate/trash decisions
-- Declutter Tips: Contextual advice for common decluttering challenges
-
-*Progress Tracking:*
-Users mark completion when they've sorted all items into the three categories.
-
-**Components**: Tools button, Checkbox, Timeline, Project Notes, Ask an Expert, Declutter Tips, Keep Quiz
-
-#### Clean Page
-**Purpose**: Guides users through thorough cleaning of their empty space to create an optimal environment for reorganization
-
-**Page Logic**:
-
-*State Management:*
-- Inherits `zoneName` from router context to maintain project continuity
-- No additional state variables needed as this is an instructional step
-
-*Cleaning Guidance:*
-Provides comprehensive instructions for deep cleaning the now-empty space, including:
-- Surface cleaning (wiping down shelves, drawers, walls)
-- Vacuuming or sweeping floors
-- Addressing any maintenance issues discovered
-- Ensuring proper lighting and ventilation
-
-*User Workflow:*
-This step emphasizes the importance of starting fresh with a clean space before returning items. The page includes specific cleaning recommendations based on common organizing areas (closets, kitchens, offices, etc.).
-
-*Progress Tracking:*
-Users confirm completion once their space is thoroughly cleaned and ready for the next phase.
-
-**Components**: Tools button, Checkbox, Timeline, Project Notes, Ask an Expert
-
-#### Categorize Page
-**Purpose**: Teaches users to group their "keep" items into logical categories based on function, frequency of use, and relationships
-
-**Page Logic**:
-
-*State Management:*
-- Inherits `zoneName` from router context
-- No complex state management required as this focuses on user education
-
-*Categorization Strategy:*
-Provides systematic approach to grouping items:
-- **By Function**: Items that serve similar purposes (all office supplies, all cooking utensils)
-- **By Frequency**: Daily use vs. occasional use vs. seasonal items
-- **By User**: Items belonging to specific family members
-- **By Zone**: Items that will be stored in the same area
-
-*Educational Content:*
-Includes examples of effective categorization strategies for different types of spaces and belongings. Emphasizes the importance of logical groupings that will make sense for long-term maintenance.
-
-*User Workflow:*
-Users physically sort their "keep" items into logical groups before proceeding to the return phase. This step is crucial for creating an organized system that will be sustainable.
-
-*Progress Tracking:*
-Completion is marked when all items are sorted into clear, logical categories.
-
-**Components**: Tools button, Checkbox, Timeline, Project Notes, Ask an Expert
-
-#### Return Page
-**Purpose**: Guides users through the strategic placement of categorized items back into their clean space using organizational best practices
-
-**Page Logic**:
-
-*State Management:*
-- `confirmedItemsReturned`: Boolean tracking whether user has finished placing items
-- `confirmedPhotoUploaded`: Boolean tracking completion of final photo upload
-- `skipPhoto`: Boolean allowing users to bypass photo requirement
-- Inherits `zoneName` from router context
-
-*Strategic Placement Guidance:*
-Provides comprehensive instructions for optimal item placement:
-- **Accessibility**: Most-used items in easily reachable locations
-- **Visibility**: Items should be visible and identifiable
-- **Logical Zones**: Related items grouped together
-- **Safety**: Heavy items on lower shelves, hazardous items secured
-
-*Photo Documentation Workflow:*
+Empty
+Purpose: Instructs users to clear items out of their space
+State Management: Inherits `zoneName` from router context to maintain project continuity
+Components: Tools button, Timeline, Project Notes, Ask an Expert
+Declutter
+Purpose: Facilitates the decision-making process for determining which items to keep, donate, or discard from the user's collection
+State Management: Inherits `zoneName` from router context
+Visual Organization System: The page implements a three-column flex layout displaying categorization options
+Decision Support Tools:
+Keep Quiz: Interactive questionnaire to guide keep/donate/trash decisions
+Declutter Tips: Contextual advice for common decluttering challenges
+Components: Tools button, Timeline, Project Notes, Ask an Expert, Declutter Tips, Keep Quiz
+Clean
+Purpose: Instructs users to clean their space in preparation for putting their items back 
+State Management: Inherits `zoneName` from router context
+Components: Tools button, Timeline, Project Notes, Ask an Expert
+Categorize
+Purpose: Instructs users to categorize their items based on functionality
+State Management: Inherits ‘zoneName’ from router context
+Components: Tools button, Timeline, Project Notes, Ask an Expert
+Return
+Purpose: Provides guidance for strategically returning the categorized items to the space  
+State Management:
+`confirmedItemsReturned`: Boolean tracking whether user has finished placing items
+`confirmedPhotoUploaded`: Boolean tracking completion of final photo upload
+`skipPhoto`: Boolean allowing users to bypass photo requirement
+ Inherits `zoneName` from router context
+Support Tools: 
+Storage Tips: Dropdown lists effective categorization strategies for different types of spaces 
+Product Suggestions: Navigates user to marketplace to shop for storage solutions
+Photo Documentation 
 A `useEffect` monitors the completion states. When `confirmedItemsReturned` becomes true, users are prompted to upload a final "after" photo of their organized space. The workflow continues when either `confirmedPhotoUploaded` or `skipPhoto` is set to true, triggering navigation to the completion page via `useRouter`.
-
-*Support Tools:*
-- Product Suggestions: Recommendations for storage solutions
-- Storage Tips: Best practices for maintaining organization
-
-*Progress Tracking:*
-Two-step completion: items returned + photo documentation (optional)
-
-**Components**: Tools button, Checkbox, Timeline, Project Notes, Ask an Expert, Product Suggestions, Storage Tips
-
-#### Complete Page
-**Purpose**: Celebrates project completion and provides final project summary and next steps
-
-**Page Logic**:
-
-*State Management:*
-- Inherits `zoneName` from router context to display project-specific completion information
-- No additional state management required as this is a celebratory endpoint
-
-*Completion Celebration:*
-Provides positive reinforcement for completing the organizing journey:
-- Congratulatory messaging personalized with project name
-- Visual celebration elements (confetti animation)
-- Summary of accomplishments and time invested
-
-*Project Finalization:*
-This page marks the official completion of the organizing project:
-- Updates project status to "completed" in localStorage
-- Records completion date and final timestamp
-- Maintains project in user's history for future reference
-
-*User Options:*
-- Navigate to view other projects
-- Start a new organizing project
-- Review completed project details
-
-*Progress Tracking:*
-Final checkbox confirms project completion and triggers status update in the project management system.
-
-**Components**: Confetti, Page Navigation, Checkbox
-
-### Tools Menu System
-
-The tools menu is implemented through the `FabButton` component, which accepts an `actions` argument to dynamically display different tools based on the current organizing step. This contextual approach ensures users only see relevant tools for their current task.
-
-**Examples of contextual tools:**
-- Declutter page: Keep Quiz, Declutter Tips
-- Return page: Product Suggestions, Storage Tips
-- All pages: Project Notes, Ask an Expert
-
-**UI Behavior:**
-The side panel's visibility is controlled by `useState` variables `open` and `setOpen`. When `open` is true, the tools panel slides out. An `aside` HTML component with click-outside detection automatically closes the panel when users click elsewhere, setting `setOpen` to false.
-
-#### Individual Tool Components
-
-**Project Notes**
-```javascript
-const ProjectNotesModal = ({open, initialNotes, zoneName, onClose, onSave})
-```
+Components: Tools button, Timeline, Project Notes, Ask an Expert, Product Suggestions, Storage Tips
+Complete
+Purpose: Congratulates the user on having completed their project
+State Management: Inherits `zoneName` from router context
+Components: Confetti, Page Navigation
+Tools Menu
+The tools menu function, ‘FabButton’, accepts an actions argument that allows the tools bar to show different tools on each page. The status of the tools button’s side panel is tracked with the ‘useState’ hooks ‘open’ and ‘setOpen’. When ‘open’ is true, the side panel is displayed. When the user clicks away from the side panel it disappears. This functionality is controlled by an aside HTML component that specifies when a click is detected outside the panel ‘setOpen’ is changed to false. 
+Project Notes: 
+const ProjectNotesModal=({open, initialNotes, zoneName, onClose, onSave })
 This modal component enables users to write and retrieve project-specific notes at any stage of the organizing process. It uses `useState` hooks (`notes`, `setNotes`) and a `useEffect` that monitors `initialNotes` and `open` props. When activated, it retrieves existing notes from the localStorage projects array using the `zoneName` as the key, then saves updates back to localStorage.
+Keep It? Quiz
+A decision-making tool with five questions, each answer having weighted point values. The quiz calculates scores for Keep/Donate/Trash categories and recommends the highest-scoring option. Implementation uses `useState` hooks to track current question index, user answers array, category scores, and results display state. The quiz progresses by incrementing the current question index until completion, then displays results.
 
-**Keep It? Quiz**
-A decision-making tool with five questions, each answer having weighted point values. The quiz calculates scores for Keep/Donate/Trash categories and recommends the highest-scoring option. Implementation uses `useState` hooks to track:
-- Current question index
-- User answers array
-- Category scores
-- Results display state
-
-The quiz progresses by incrementing the current question index until completion, then displays results.
-
-**Ask an Expert**
+Ask an Expert
 An AI chat interface powered by the Gemini API. The core logic resides in the `handleSend()` async function, which:
-1. Updates the `messages` useState variable
-2. Makes an HTTP POST request to Gemini
-3. Converts the JSON response to JavaScript
-4. Includes error handling that displays "Error contacting AI" on API failures
+Updates the `messages` useState variable
+Makes an HTTP POST request to Gemini
+Converts the JSON response to JavaScript
+Includes error handling that displays "Error contacting AI" on API failures
 
-**Tips Popups**
-Implemented on declutter and return pages using a `Dropdown` component to organize content. Each dropdown contains page-specific labels and items tailored to that organizing step's needs.
+Tips Popups
+A tips popup is implemented in the declutter page and return page. In both pages, a dropdown module is imported to organize the text. The labels and items within each dropdown are specific to the page in which the dropdown is being displayed.
+Progress Tracking
+The progress tracking system uses navigation-based step completion combined with React Context to automatically track user progress as they move through the organizing workflow.
 
-### Progress Tracking System
-
-The progress tracking system uses a `CheckBox` component combined with React Context to ensure checkbox states persist across page navigation and browser sessions.
-
-#### React Context Architecture
-
+React Context Architecture
 The `DoneStepsProvider` component provides context for managing completed tasks across all projects through three key functions:
 
-**1. `getDoneSteps(zoneName)`**
-```javascript
-const getDoneSteps = (zoneName) => doneStepsByZone[zoneName] || [];
-```
+
+`getDoneSteps(zoneName)`
 This function returns an array of completed steps for a given project name. If no steps exist for the zone, it returns an empty array.
+`setStepChecked(zoneName, step, checked)`
+This function handles adding or removing steps from a project's completion list when users navigate through the workflow. The logic works as follows:
+If the `checked` parameter is true: the step is added to the list (if not already present)
+If the `checked` parameter is false: the step is filtered from the list (when using back navigation)
+After updating the step list, `utils.updateProjectStep` is called to update the project status and current step.
+`removeZoneSteps(zoneName)`
+This function completely clears all completed steps for a project when it's deleted. This ensures that if a new project is created with the same name in the future, step tracking starts fresh because the project's entry is deleted from `doneStepsByZone`.
 
-**2. `setStepChecked(zoneName, step, checked)`**
-This function handles adding or removing steps from a project's completion list. The logic works as follows:
-- If the `checked` parameter is true: the step is added to the list (if not already present)
-- If the `checked` parameter is false: the step is removed from the list
 
-**3. `removeZoneSteps(zoneName)`**
-This function completely clears all completed steps for a project when it's deleted. This ensures that if a new project is created with the same name in the future, all checkboxes start in an unchecked state because the project's entry is deleted from `doneStepsByZone`.
-
-#### Bidirectional Data Flow
-
-**External → Internal Sync (useEffect)**
-Each `CheckBox` component contains a `useEffect` with dependencies `[zoneName, markedStep, getDoneSteps]` that:
-- Runs when the component mounts
-- Re-runs when the project name changes
-- Re-runs when the done steps data updates elsewhere in the app
-- Updates the checkbox's visual state to match the context data
-
-**Internal → External Sync (handleChange)**
-When a user clicks a checkbox, the `handleChange()` function:
-1. Updates the local component state immediately
-2. Calls `setStepChecked(zoneName, markedStep, isChecked)` to update the global context
-3. Triggers the `updateProjectStep()` utility function
-
-#### Project Status Management
-
-**`updateProjectStep(zoneName, doneStepsInput)`**
+Project Status Management
+‘updateProjectStep(zoneName, doneStepsInput)’
 This utility function maintains project status accuracy by:
-1. Retrieving the current projects array from localStorage
-2. Comparing `doneStepsInput` against the ordered list of organizing steps
-3. Determining the `currentStep` (the leftmost incomplete step)
-4. Setting status to "In Progress" if `currentStep` is not "complete"
-5. Updating the projects array with the new completion data, current step, and status
+Retrieving the current projects array from localStorage
+Comparing `doneStepsInput` against the ordered list of organizing steps
+Determining the `currentStep` (the leftmost incomplete step)
+Setting status to "In Progress" if `currentStep` is not "complete"
+Updating the projects array with the new completion data, current step, and status
 
-#### Component Integration Flow
+Timeline
+The `Timeline` component appears on all workflow pages as a horizontal progress indicator that serves two purposes: visual progress tracking and quick navigation.The timeline displays as a series of connected dots, where each dot represents one of the seven organizing steps. Dots are filled in based on the user's current position in the workflow, providing immediate visual feedback on progress.The component accepts the current page as a prop and uses a mapping object to correlate each organizing step with its corresponding route path and workflow index. This mapping enables:
+Accurate visual representation of progress
+Direct navigation to any step via `useRouter`
 
-The complete interaction between CheckBox components, React Context, and project status management follows this flow:
+Navigation-Based Progress Flow
+The complete interaction between navigation controls, React Context, and project status management follows this flow:
 
-**1. Initial State Synchronization**
-Upon detecting a change in the project name, page being viewed, or completed steps array, a `useEffect` runs in each CheckBox component to set the checkbox state to match existing data from the React Context.
+Navigation Trigger
+When users click the center button ("I'm ready to..." or "Next") or use the back arrow, the `handleNextStep` function is called within the current page component.
 
-**2. User Interaction Handler**
-When a checkbox is clicked, the `handleChange()` function executes the following sequence:
-- Updates the local component state immediately for responsive UI
-- Calls `setStepChecked(zoneName, markedStep, isChecked)` to update the global React Context
-- This triggers a cascade of updates throughout the application
+Step Completion Handler
+The `handleNextStep` function calls `setStepChecked(zoneName, currentPageName, true)` to mark the current step as completed before navigating to the next page. When using back navigation, steps may be unmarked by calling `setStepChecked` with `false`.
 
-**3. Project Status Update Chain**
-Within `setStepChecked()`, a core utility function is called to maintain project accuracy:
+Project Status Update Chain
+Within `setStepChecked()`, `utils.updateProjectStep` is called to maintain project accuracy by updating the current step and project status.
 
-```javascript
-export const updateProjectStep = (zoneName, doneStepsInput)
-```
-
-This function performs critical project management tasks:
-- Retrieves the current projects array from localStorage
-- Compares `doneStepsInput` to the ordered list of organizing steps
-- Determines `currentStep` (the leftmost step present in orderedSteps but not in doneStepsInput)
-- Sets status to "In Progress" if `currentStep` is not "complete"
-- Updates the projects array with the new completed steps array, current step, and status
-
-**4. Real-time Synchronization**
+Real-time Synchronization
 This integration ensures that:
-- All CheckBox components across different pages stay synchronized
-- Project status accurately reflects completion progress
-- Users can navigate between pages without losing progress
-- The Timeline component displays accurate progress indicators
+Progress tracking is automatically updated based on user navigation
+Project status accurately reflects completion progress
+Users can navigate between pages without losing progress
+The timeline component reflects the current progress state
 
-### Timeline Component
+Challenges
+Migrating Tracking from Local Component State to React Context
+Initially, project tracking was being done solely via the project array in localStorage. When navigation-based progress tracking was implemented, there was a need for a centralized system to manage step completion across page navigation. Without a global state management solution, progress tracking would be inconsistent and projects would lose their completion state during navigation.
 
-The `Timeline` component appears on all workflow pages as a horizontal progress indicator that serves two purposes: visual progress tracking and quick navigation.
-
-**Visual Design:**
-The timeline displays as a series of connected dots, where each dot represents one of the seven organizing steps. Dots are filled in based on the user's current position in the workflow, providing immediate visual feedback on progress.
-
-**Technical Implementation:**
-The component accepts the current page as a prop and uses a mapping object (not dictionary) to correlate each organizing step with its corresponding route path and workflow index. This mapping enables:
-- Accurate visual representation of progress
-- Direct navigation to any step via `useRouter`
-
-**User Interaction:**
-Users can click on any dot to jump directly to that organizing step, allowing for non-linear navigation through the workflow when needed.
-
-## Challenges
-
-### Migrating Tracking from Local Component State to React Context
-
-Initially, project tracking was being done solely via the project array in localStorage. When the checkbox component was implemented, the checkbox states were not persisting across page navigation. This was due to the CheckBox components remounting during navigation, causing them to lose their internal state and revert to their default unchecked state. Additionally, the current step and project status was not accurate because each checkbox maintained its own isolated state without any centralized coordination.
-
-The migration to React Context (via DoneStepsContext) solved all these problems by:
-- Creating a centralized, persistent store for all completed steps across all project zones
-- Ensuring checkbox states survive component remounting during navigation
-- Providing a single source of truth that all components can access and update
-- Enabling real-time synchronization between checkboxes and other UI elements
+The implementation of React Context (via DoneStepsContext) solved these problems by:
 Creating a centralized, persistent store for all completed steps across all project zones
-Ensuring checkbox states survive component remounting during navigation
+Ensuring step completion states persist across page navigation and browser sessions
 Providing a single source of truth that all components can access and update
-Enabling real-time synchronization between checkboxes and other UI elements
-
+Enabling real-time synchronization between navigation actions and progress tracking
+Automatically updating project status and current step through the `utils.updateProjectStep` function
 
 Outcome
+The migration from localStorage-based step tracking to React Context has delivered significant improvements in application reliability and user experience:
 
+Technical Benefits:
+- Eliminated data loss issues that could occur from component remounting during navigation
+- Removed race conditions between multiple components accessing localStorage simultaneously
+- Centralized state management reduces complexity and improves maintainability
+- Consistent step tracking across all pages without risk of accidental data overwrites
 
-## Outcome
+User Experience Improvements:
+- Seamless progress preservation during navigation between organizing steps
+- Reliable step completion tracking that persists across browser sessions
+- Real-time timeline updates that accurately reflect current progress
+- Consistent project status synchronization across all application components
 
-The Organizing Buddy application successfully provides users with a structured, trackable approach to home organization. The React Context implementation solved critical state management challenges, while the modular component architecture allows for easy maintenance and feature expansion. The contextual tools system enhances user experience by providing relevant assistance at each step of the organizing process.
+System Reliability:
+- Single source of truth eliminates state inconsistencies
+- Robust error handling through centralized context provider
+- Improved debugging capabilities with centralized state management
+- Future-proof architecture that can easily accommodate additional tracking features

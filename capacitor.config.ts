@@ -7,9 +7,9 @@ const config: CapacitorConfig = {
   webDir: 'out',
   server: {
     // For development - your computer's IP address
-    url: 'http://192.168.1.129:3000', // Local testing with your IP
+    // url: 'http://192.168.1.129:3000', // Local testing with your IP
     // For production - replace with your deployed Vercel URL
-    // url: 'https://your-app.vercel.app'
+    url: 'https://your-app.vercel.app'
   }
 };
 
